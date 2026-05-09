@@ -1,0 +1,6 @@
+<default>
+    <default class="xml330_actuator">
+        <joint damping="0.044" frictionloss="0.013" armature="0.0017"/>
+        <position kp="0.43" kv="0.0" forcerange="-0.75 0.75"/>
+    </default>
+</default>

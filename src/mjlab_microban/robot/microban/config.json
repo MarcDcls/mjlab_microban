@@ -4,7 +4,6 @@
     "simplify_stls": "visual",
     "use_scads": false,
     "max_stl_size": 1,
-    "additional_xml": "no_slip.xml",
     "ignore": {
         "frame": "all",
         "STP39": "all",
@@ -14,5 +13,11 @@
         "raspberry*": "all",
         "BMS": "all",
         "charger": "all"
+    },
+    "additional_xml": "additional.xml",
+    "joint_properties": {
+        "*": {
+            "class": "xml330_actuator"
+        }
     }
 }
