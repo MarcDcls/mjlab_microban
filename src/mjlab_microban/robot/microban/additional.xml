@@ -4,3 +4,12 @@
         <position kp="0.43" kv="0.0" forcerange="-0.75 0.75"/>
     </default>
 </default>
+<sensor>
+    <framequat name="orientation" objtype="site" noise="0.001" objname="imu"/>
+    <gyro name="angular-velocity" site="imu" noise="0.005"/>
+
+    <gyro name="imu_ang_vel" site="imu"/>
+    <velocimeter name="imu_lin_vel" site="imu"/>
+    <accelerometer name="imu_accel" site="imu"/>
+    <subtreeangmom name="root_angmom" body="trunk"/>
+</sensor>
