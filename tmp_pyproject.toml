@@ -1,0 +1,31 @@
+[build-system]
+requires = ["uv_build>=0.8.19,<0.9.0"]
+build-backend = "uv_build"
+
+[project]
+name = "mjlab-microban"
+version = "0.1.0"
+description = "Microban RL environment for mjlab"
+readme = "README.md"
+requires-python = ">=3.12, <3.13"
+dependencies = [
+    "mujoco",
+    "mjlab",
+    "placo>=0.9.20",
+    "warp-lang==1.12.1",
+]
+
+[project.entry-points."mjlab.tasks"]
+mjlab_microban = "mjlab_microban.tasks"
+
+[tool.ruff]
+src = ["src"]  # Helpful for recognizing first-party imports.
+indent-width = 4
+exclude = [
+  "src/mjlab/third_party",
+  "typings",
+]
+
+[tool.uv.sources]
+mjlab = { git = "https://github.com/mujocolab/mjlab.git", rev = "e3ba8fb" }
+mujoco = { path = "mujoco-3.7.1.dev902502398-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl" }
