@@ -197,6 +197,9 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     for reward_name in ["foot_clearance", "foot_swing_height", "foot_slip"]:
         cfg.rewards[reward_name].params["asset_cfg"].site_names = site_names
 
+    cfg.rewards["foot_clearance"].params["height"] = 0.03
+    cfg.rewards["foot_swing_height"].params["height"] = 0.03
+
     # cfg.rewards["foot_swing_height"].weight = 0.0
     # cfg.rewards["foot_slip"].weight = 0.0
     # cfg.rewards["foot_clearance"].weight = 0.0
@@ -240,14 +243,17 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     command: UniformVelocityCommandCfg = cfg.commands["twist"]
     command.rel_standing_envs = 0.25
     command.rel_heading_envs = 0.0
-    command.viz.z_offset = 1.0
+    command.viz.z_offset = 0.5
+
+    command.ranges.lin_vel_x = (-0.3, 0.3)
+    command.ranges.lin_vel_y = (-0.3, 0.3)
 
     #---------------------------- Events ----------------------------
     cfg.events["reset_base"].params["pose_range"]["z"] = (0, 0)
 
     cfg.events["push_robot"].params["velocity_range"] = {
-        "x": (-0.75, 0.75),
-        "y": (-0.75, 0.75),
+        "x": (-0.5, 0.5),
+        "y": (-0.5, 0.5),
     }
 
     cfg.events["foot_friction"].params["asset_cfg"].geom_names = (
@@ -256,9 +262,9 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     )
 
     cfg.events["base_com"].params["ranges"] = {
-        0: (-0.025, 0.025),
-        1: (-0.05, 0.05),
-        2: (-0.05, 0.05),
+        0: (-0.015, 0.015),
+        1: (-0.025, 0.025),
+        2: (-0.025, 0.025),
     }
     cfg.events["base_com"].params["asset_cfg"].body_names = ("trunk",)
 
@@ -290,13 +296,20 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         params={
             "command_name": "twist",
             "velocity_stages": [
-                {"step": 0, "lin_vel_x": (-1.0, 1.0), "ang_vel_z": (-0.5, 0.5)},
                 {
-                    "step": 1_500 * 24,
-                    "lin_vel_x": (-1.5, 2.0),
-                    "ang_vel_z": (-1.5, 1.5),
+                    "step": 0, 
+                    "lin_vel_x": (-0.3, 0.3), 
+                    "ang_vel_z": (-0.5, 0.5),
                 },
-                {"step": 3_000 * 24, "lin_vel_z": (-3.0, 3.0)},
+                {
+                    "step": 5000 * 24,
+                    "lin_vel_x": (-0.5, 0.6),
+                    "ang_vel_z": (-1, 1),
+                },
+                {
+                    "step": 10000 * 24, 
+                    "lin_vel_x": (-0.75, 1.0),
+                },
             ],
         },
     )
@@ -307,7 +320,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "reward_name": "action_rate_l2",
             "weight_stages": [
                 {"step": 0, "weight": -0.1},
-                {"step": 24 * 2_000, "weight": -0.15},
+                {"step": 2000 * 24, "weight": -0.15},
             ],
         },
     )
@@ -318,9 +331,9 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "reward_name": "soft_landing",
             "weight_stages": [
                 {"step": 0, "weight": -1e-4},
-                {"step": 1_000 * 24, "weight": -5e-4},
-                {"step": 2_000 * 24, "weight": -1e-3},
-                {"step": 3_000 * 24, "weight": -5e-3},
+                {"step": 2000 * 24, "weight": -5e-4},
+                {"step": 3000 * 24, "weight": -1e-3},
+                {"step": 4000 * 24, "weight": -5e-3},
             ],
         },
     )
