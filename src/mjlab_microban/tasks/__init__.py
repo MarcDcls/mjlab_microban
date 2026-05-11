@@ -7,7 +7,7 @@ from mjlab_microban.tasks.microban_velocity_env_cfg import (
 )
 
 register_mjlab_task(
-    task_id="Mjlab-Velocity-Microban-K1",
+    task_id="Mjlab-Velocity-Microban",
     env_cfg=make_microban_velocity_env_cfg(),
     play_env_cfg=make_microban_velocity_env_cfg(play=True),
     rl_cfg=MicrobanVelocityRlCfg,
