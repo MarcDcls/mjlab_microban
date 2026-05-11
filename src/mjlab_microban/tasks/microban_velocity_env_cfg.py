@@ -197,8 +197,8 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     for reward_name in ["foot_clearance", "foot_swing_height", "foot_slip"]:
         cfg.rewards[reward_name].params["asset_cfg"].site_names = site_names
 
-    cfg.rewards["foot_clearance"].params["height"] = 0.03
-    cfg.rewards["foot_swing_height"].params["height"] = 0.03
+    cfg.rewards["foot_clearance"].params["target_height"] = 0.03
+    cfg.rewards["foot_swing_height"].params["target_height"] = 0.03
 
     # cfg.rewards["foot_swing_height"].weight = 0.0
     # cfg.rewards["foot_slip"].weight = 0.0
