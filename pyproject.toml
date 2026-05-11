@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.entry-points."mjlab.tasks"]
-mjlab_booster = "mjlab_microban.tasks"
+mjlab_microban = "mjlab_microban.tasks"
 
 [tool.ruff]
 src = ["src"]  # Helpful for recognizing first-party imports.
