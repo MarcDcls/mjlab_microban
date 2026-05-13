@@ -46,6 +46,7 @@ from mjlab.managers.observation_manager import ObservationGroupCfg
 from mjlab.managers.termination_manager import TerminationTermCfg
 
 from mjlab.envs.mdp import dr
+from mjlab.envs.mdp.terminations import root_height_below_minimum
 
 from mjlab.utils.noise import UniformNoiseCfg as Unoise
 from mjlab.scene import SceneCfg
@@ -186,6 +187,9 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
     #---------------------------- Rewards ---------------------------
+    cfg.rewards["track_linear_velocity"].weight = 2.0
+    cfg.rewards["track_angular_velocity"].weight = 2.0
+
     std_standing = {
         r".*head.*": 0.3,
         r".*shoulder_pitch.*": 0.1,
@@ -216,7 +220,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.rewards["pose"].params["std_walking"] = std_walking
     cfg.rewards["pose"].params["std_running"] = std_walking
     cfg.rewards["pose"].params["walking_threshold"] = 0.01
-    cfg.rewards["pose"].weight = 2.0
+    cfg.rewards["pose"].weight = 1.0
 
     cfg.rewards["upright"].params["asset_cfg"].body_names = ("trunk",)
     cfg.rewards["upright"].weight = 1.0
@@ -265,9 +269,10 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     #---------------------------- Events ----------------------------
     cfg.events["reset_base"].params["pose_range"]["z"] = (0, 0)
 
+    # cfg.events["push_robot"].interval_range_s = (3.0, 6.0)
     cfg.events["push_robot"].params["velocity_range"] = {
-        "x": (-0.3, 0.3),
-        "y": (-0.3, 0.3),
+        "x": (-0.5, 0.5),
+        "y": (-0.5, 0.5),
     }
 
     cfg.events["foot_friction"].params["asset_cfg"].geom_names = (
@@ -351,6 +356,12 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     #         ],
     #     },
     # )
+
+    #---------------------------- Terminations ----------------------
+    cfg.terminations["fell_over"] = TerminationTermCfg(
+        func=root_height_below_minimum,
+        params={"minimum_height": 0.10},
+    )
 
     #---------------------------- Play mode -------------------------
     if play:
