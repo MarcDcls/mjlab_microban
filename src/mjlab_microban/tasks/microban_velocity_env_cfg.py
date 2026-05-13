@@ -186,62 +186,76 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
     #---------------------------- Rewards ---------------------------
+    std_standing = {
+        r".*head.*": 0.3,
+        r".*shoulder_pitch.*": 0.1,
+        r".*shoulder_roll.*": 0.1,
+        r".*elbow.*": 0.1,
+        r".*hip_roll.*": 0.1,
+        r".*hip_pitch.*": 0.15,
+        r".*hip_yaw.*": 0.1,
+        r".*knee.*": 0.15,
+        r".*ankle_pitch.*": 0.1,
+        r".*ankle_roll.*": 0.1,
+    }
+
+    std_walking = {
+        r".*head.*": 0.3,
+        r".*shoulder_pitch.*": 0.4,
+        r".*shoulder_roll.*": 0.2,
+        r".*elbow.*": 0.2,
+        r".*hip_roll.*": 0.2,
+        r".*hip_pitch.*": 0.4,
+        r".*hip_yaw.*": 0.2,
+        r".*knee.*": 0.4,
+        r".*ankle_pitch.*": 0.3,
+        r".*ankle_roll.*": 0.2,
+    }
+
+    cfg.rewards["pose"].params["std_standing"] = std_standing
+    cfg.rewards["pose"].params["std_walking"] = std_walking
+    cfg.rewards["pose"].params["std_running"] = std_walking
+    cfg.rewards["pose"].params["walking_threshold"] = 0.01
+    cfg.rewards["pose"].weight = 2.0
+
     cfg.rewards["upright"].params["asset_cfg"].body_names = ("trunk",)
+    cfg.rewards["upright"].weight = 1.0
+    
     cfg.rewards["body_ang_vel"].params["asset_cfg"].body_names = ("trunk",)
     cfg.rewards["body_ang_vel"].weight = -0.05
+
     cfg.rewards["angular_momentum"].weight = -0.02
-    cfg.rewards["air_time"].weight = 0.0
-    cfg.rewards["soft_landing"].weight = -1e-3
-    cfg.rewards["action_rate_l2"].weight = -0.1
 
     for reward_name in ["foot_clearance", "foot_swing_height", "foot_slip"]:
         cfg.rewards[reward_name].params["asset_cfg"].site_names = site_names
 
-    cfg.rewards["foot_clearance"].params["target_height"] = 0.03
-    cfg.rewards["foot_swing_height"].params["target_height"] = 0.03
+    cfg.rewards["foot_clearance"].params["command_threshold"] = 0.01
+    cfg.rewards["foot_clearance"].params["target_height"] = 0.02
 
-    # cfg.rewards["foot_swing_height"].weight = 0.0
-    # cfg.rewards["foot_slip"].weight = 0.0
-    # cfg.rewards["foot_clearance"].weight = 0.0
-    # cfg.rewards["soft_landing"].weight = 0.0
+    cfg.rewards["foot_swing_height"].params["command_threshold"] = 0.01
+    cfg.rewards["foot_swing_height"].params["target_height"] = 0.02
 
-    cfg.rewards["self_collisions"] = RewardTermCfg(
-        func=mdp.self_collision_cost,
-        weight=-1.0,
-        params={"sensor_name": self_collision_sensor_cfg.name},
-    )
+    cfg.rewards["foot_slip"].params["command_threshold"] = 0.01
+    cfg.rewards["foot_slip"].weight = -0.1
 
-    std_standing = {
-        r".*head.*": 0.3,
-        r".*knee.*": 0.05,
-        r".*ankle_pitch.*": 0.05,
-        r".*ankle_roll.*": 0.05,
-        r".*hip_roll.*": 0.05,
-        r".*hip_pitch.*": 0.05,
-        r".*hip_yaw.*": 0.05,
-        r".*shoulder_pitch.*": 0.1,
-        r".*shoulder_roll.*": 0.1,
-        r".*elbow.*": 0.1,
-    }
-    std_walking = {
-        r".*head.*": 0.3,
-        r".*knee.*": 0.4,
-        r".*ankle_pitch.*": 0.15,
-        r".*ankle_roll.*": 0.15,
-        r".*hip_roll.*": 0.2,
-        r".*hip_pitch.*": 0.4,
-        r".*hip_yaw.*": 0.3,
-        r".*shoulder_pitch.*": 0.4,
-        r".*shoulder_roll.*": 0.3,
-        r".*elbow.*": 0.25,
-    }
-    cfg.rewards["pose"].params["std_standing"] = std_standing
-    cfg.rewards["pose"].params["std_walking"] = std_walking
-    cfg.rewards["pose"].params["std_running"] = std_walking
+    cfg.rewards["air_time"].params["command_threshold"] = 0.01
+    cfg.rewards["air_time"].params["threshold_min"] = 0.10
+    cfg.rewards["air_time"].params["threshold_max"] = 0.25
+    cfg.rewards["air_time"].weight = 5.0
+
+    cfg.rewards["soft_landing"].weight = -1e-05
+
+    cfg.rewards["action_rate_l2"].weight = -0.5
+
+    # cfg.rewards["self_collisions"] = RewardTermCfg(
+    #     func=mdp.self_collision_cost,
+    #     weight=-1.0,
+    #     params={"sensor_name": self_collision_sensor_cfg.name},
+    # )
 
     #---------------------------- Commands --------------------------
     command: UniformVelocityCommandCfg = cfg.commands["twist"]
-    command.rel_standing_envs = 0.25
+    command.rel_standing_envs = 0.1
     command.rel_heading_envs = 0.0
     command.viz.z_offset = 0.5
 
@@ -252,8 +266,8 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.events["reset_base"].params["pose_range"]["z"] = (0, 0)
 
     cfg.events["push_robot"].params["velocity_range"] = {
-        "x": (-0.5, 0.5),
-        "y": (-0.5, 0.5),
+        "x": (-0.3, 0.3),
+        "y": (-0.3, 0.3),
     }
 
     cfg.events["foot_friction"].params["asset_cfg"].geom_names = (
@@ -262,31 +276,31 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     )
 
     cfg.events["base_com"].params["ranges"] = {
-        0: (-0.015, 0.015),
-        1: (-0.025, 0.025),
-        2: (-0.025, 0.025),
+        0: (-0.005, 0.005),
+        1: (-0.005, 0.005),
+        2: (-0.005, 0.005),
     }
     cfg.events["base_com"].params["asset_cfg"].body_names = ("trunk",)
 
-    cfg.events["dof_armature_randomization"] = EventTermCfg(
-        mode="startup",
-        func=dr.joint_armature,
-        params={
-            "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
-            "operation": "scale",
-            "ranges": (0.5, 1.5),
-        },
-    )
+    # cfg.events["dof_armature_randomization"] = EventTermCfg(
+    #     mode="startup",
+    #     func=dr.joint_armature,
+    #     params={
+    #         "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
+    #         "operation": "scale",
+    #         "ranges": (0.5, 1.5),
+    #     },
+    # )
 
-    cfg.events["dof_friction_randomization"] = EventTermCfg(
-        mode="startup",
-        func=dr.joint_friction,
-        params={
-            "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
-            "operation": "abs",
-            "ranges": (0.0, 0.1),
-        },
-    )
+    # cfg.events["dof_friction_randomization"] = EventTermCfg(
+    #     mode="startup",
+    #     func=dr.joint_friction,
+    #     params={
+    #         "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
+    #         "operation": "abs",
+    #         "ranges": (0.0, 0.1),
+    #     },
+    # )
 
     #---------------------------- Curriculum ------------------------
     del cfg.curriculum["terrain_levels"]
@@ -301,49 +315,49 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                     "lin_vel_x": (-0.3, 0.3), 
                     "ang_vel_z": (-0.5, 0.5),
                 },
-                {
-                    "step": 5000 * 24,
-                    "lin_vel_x": (-0.5, 0.6),
-                    "ang_vel_z": (-1, 1),
-                },
-                {
-                    "step": 10000 * 24, 
-                    "lin_vel_x": (-0.75, 1.0),
-                },
+                # {
+                #     "step": 5000 * 24,
+                #     "lin_vel_x": (-0.5, 0.6),
+                #     "ang_vel_z": (-1, 1),
+                # },
+                # {
+                #     "step": 10000 * 24, 
+                #     "lin_vel_x": (-0.75, 1.0),
+                # },
             ],
         },
     )
 
-    cfg.curriculum["action_rate_l2"] = CurriculumTermCfg(
-        func=mdp.reward_weight,
-        params={
-            "reward_name": "action_rate_l2",
-            "weight_stages": [
-                {"step": 0, "weight": -0.1},
-                {"step": 2000 * 24, "weight": -0.15},
-            ],
-        },
-    )
+    # cfg.curriculum["action_rate_l2"] = CurriculumTermCfg(
+    #     func=mdp.reward_weight,
+    #     params={
+    #         "reward_name": "action_rate_l2",
+    #         "weight_stages": [
+    #             {"step": 0, "weight": -0.1},
+    #             # {"step": 2000 * 24, "weight": -0.15},
+    #         ],
+    #     },
+    # )
 
-    cfg.curriculum["soft_landing"] = CurriculumTermCfg(
-        func=mdp.reward_weight,
-        params={
-            "reward_name": "soft_landing",
-            "weight_stages": [
-                {"step": 0, "weight": -1e-4},
-                {"step": 2000 * 24, "weight": -5e-4},
-                {"step": 3000 * 24, "weight": -1e-3},
-                {"step": 4000 * 24, "weight": -5e-3},
-            ],
-        },
-    )
+    # cfg.curriculum["soft_landing"] = CurriculumTermCfg(
+    #     func=mdp.reward_weight,
+    #     params={
+    #         "reward_name": "soft_landing",
+    #         "weight_stages": [
+    #             {"step": 0, "weight": -1e-4},
+    #             {"step": 2000 * 24, "weight": -5e-4},
+    #             {"step": 3000 * 24, "weight": -1e-3},
+    #             {"step": 4000 * 24, "weight": -5e-3},
+    #         ],
+    #     },
+    # )
 
     #---------------------------- Play mode -------------------------
     if play:
-        cfg.events["push_robot"].params["velocity_range"] = {
-            "x": (0.0, 0.0),
-            "y": (0.0, 0.0),
-        }
+        # cfg.events["push_robot"].params["velocity_range"] = {
+        #     "x": (0.0, 0.0),
+        #     "y": (0.0, 0.0),
+        # }
 
         # cfg.commands["twist"].ranges.ang_vel_z = (0.0, 0.0)
         # cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
