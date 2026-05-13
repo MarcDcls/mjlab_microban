@@ -1,8 +1,8 @@
-mujoco-3.7.1.dev902502398-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+src/mjlab_microban/tasks/microban_standup_env_cfg.py
 
 **/__pycache__/
 
-**/*.scad
+src/mjlab_microban/robot/microban/scad/
 
 .vscode/*
 .venv/*
