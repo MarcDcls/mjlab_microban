@@ -63,7 +63,7 @@ from mjlab.utils.lab_api.math import sample_uniform, quat_apply_inverse
 from mjlab.utils.lab_api.string import resolve_matching_names_values
 from mjlab.tasks.velocity import mdp as mdp_vel
 from mjlab.envs.mdp.actions import JointPositionActionCfg
-from mjlab.sensor import ContactMatch, ContactSensorCfg, ContactSensor
+from mjlab.sensor import ContactMatch, ContactSensorCfg, ContactSensor, ObjRef, TerrainHeightSensorCfg, RingPatternCfg
 
 SCENE_CFG = SceneCfg(
     terrain=TerrainEntityCfg(
@@ -99,9 +99,11 @@ SIM_CFG = SimulationCfg(
 def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg = make_velocity_env_cfg()
 
-    cfg.viewer = VIEWER_CONFIG
-    cfg.sim = SIM_CFG
-    cfg.scene = SCENE_CFG
+    cfg.viewer = deepcopy(VIEWER_CONFIG)
+    cfg.sim = deepcopy(SIM_CFG)
+    cfg.scene = deepcopy(SCENE_CFG)
+
+    foot_site_names = ["left_foot", "right_foot"]
 
     #---------------------------- Sensors ---------------------------
     feet_ground_sensor_cfg = ContactSensorCfg(
@@ -118,6 +120,17 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         track_air_time=True,
     )
 
+    foot_height_scan_cfg = TerrainHeightSensorCfg(
+        name="foot_height_scan",
+        frame=tuple(ObjRef(type="site", name=s, entity="robot") for s in foot_site_names),
+        pattern=RingPatternCfg.single_ring(radius=0.04, num_samples=2),
+        ray_alignment="yaw",
+        max_distance=1.0,
+        exclude_parent_body=True,
+        include_geom_groups=(0,),
+        debug_vis=False,
+    )
+
     # self_collision_sensor_cfg = ContactSensorCfg(
     #     name="self_collision",
     #     primary=ContactMatch(mode="subtree", pattern="trunk", entity="robot"),
@@ -126,8 +139,12 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     #     reduce="none",
     #     num_slots=1,
     # )
-
-    cfg.scene.sensors = (feet_ground_sensor_cfg,) # self_collision_sensor_cfg)
+    
+    cfg.scene.sensors = (
+        feet_ground_sensor_cfg,
+        foot_height_scan_cfg,
+        # self_collision_sensor_cfg,
+    )
 
     #---------------------------- Terrain ---------------------------
     cfg.scene.terrain.terrain_type = "plane"
@@ -157,20 +174,6 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=(dofs_filter,))},
         noise=Unoise(n_min=-0.25, n_max=0.25),
     )
-
-    # cfg.observations["actor"].terms["joint_vel"] = ObservationTermCfg(
-    #     func=qvel_smooth_rel,
-    #     params={
-    #         "action_name": "qvel_filter",
-    #         "asset_cfg": SceneEntityCfg("robot", joint_names=(dofs_filter,)),
-    #     },
-    #     noise=Unoise(n_min=-0.5, n_max=0.5),
-    # )
-
-    site_names = ["left_foot", "right_foot"]
-    cfg.observations["critic"].terms["foot_height"].params[
-        "asset_cfg"
-    ].site_names = site_names
 
     # Observation delays to simulate IMU latency
     cfg.observations["actor"].terms["projected_gravity"] = deepcopy(
@@ -232,8 +235,8 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     cfg.rewards["angular_momentum"].weight = -0.02
 
-    for reward_name in ["foot_clearance", "foot_swing_height", "foot_slip"]:
-        cfg.rewards[reward_name].params["asset_cfg"].site_names = site_names
+    for reward_name in ["foot_clearance", "foot_slip"]:
+        cfg.rewards[reward_name].params["asset_cfg"].site_names = foot_site_names
 
     cfg.rewards["foot_clearance"].params["command_threshold"] = 0.05
     cfg.rewards["foot_clearance"].params["target_height"] = 0.02
@@ -253,7 +256,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.rewards["foot_slip"].params["command_threshold"] = 0.05
     cfg.rewards["foot_slip"].weight = -0.1
 
-    cfg.rewards["action_rate_l2"].weight = -0.5
+    cfg.rewards["action_rate_l2"].weight = -0.1
 
     # cfg.rewards["self_collisions"] = RewardTermCfg(
     #     func=mdp.self_collision_cost,
@@ -273,7 +276,6 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     #---------------------------- Events ----------------------------
     cfg.events["reset_base"].params["pose_range"]["z"] = (0, 0)
 
-    # cfg.events["push_robot"].interval_range_s = (3.0, 6.0)
     cfg.events["push_robot"].params["velocity_range"] = {
         "x": (-0.5, 0.5),
         "y": (-0.5, 0.5),
