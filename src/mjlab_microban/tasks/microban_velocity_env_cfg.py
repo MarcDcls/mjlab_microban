@@ -187,7 +187,9 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
     #---------------------------- Rewards ---------------------------
+    cfg.rewards["track_linear_velocity"].params["std"] = np.sqrt(0.1)
     cfg.rewards["track_linear_velocity"].weight = 2.0
+
     cfg.rewards["track_angular_velocity"].weight = 2.0
 
     std_standing = {
@@ -245,7 +247,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.rewards["air_time"].params["command_threshold"] = 0.01
     cfg.rewards["air_time"].params["threshold_min"] = 0.10
     cfg.rewards["air_time"].params["threshold_max"] = 0.25
-    cfg.rewards["air_time"].weight = 5.0
+    cfg.rewards["air_time"].weight = 1.0
 
     cfg.rewards["soft_landing"].weight = -1e-05
 
