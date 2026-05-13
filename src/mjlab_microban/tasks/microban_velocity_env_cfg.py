@@ -235,21 +235,23 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     for reward_name in ["foot_clearance", "foot_swing_height", "foot_slip"]:
         cfg.rewards[reward_name].params["asset_cfg"].site_names = site_names
 
-    cfg.rewards["foot_clearance"].params["command_threshold"] = 0.01
+    cfg.rewards["foot_clearance"].params["command_threshold"] = 0.05
     cfg.rewards["foot_clearance"].params["target_height"] = 0.02
+    cfg.rewards["foot_clearance"].weight = 0.0
 
-    cfg.rewards["foot_swing_height"].params["command_threshold"] = 0.01
+    cfg.rewards["foot_swing_height"].params["command_threshold"] = 0.05
     cfg.rewards["foot_swing_height"].params["target_height"] = 0.02
+    cfg.rewards["foot_swing_height"].weight = 0.0
 
-    cfg.rewards["foot_slip"].params["command_threshold"] = 0.01
-    cfg.rewards["foot_slip"].weight = -0.1
-
-    cfg.rewards["air_time"].params["command_threshold"] = 0.01
+    cfg.rewards["air_time"].params["command_threshold"] = 0.05
     cfg.rewards["air_time"].params["threshold_min"] = 0.10
     cfg.rewards["air_time"].params["threshold_max"] = 0.25
-    cfg.rewards["air_time"].weight = 1.0
+    cfg.rewards["air_time"].weight = 0.0
 
-    cfg.rewards["soft_landing"].weight = -1e-05
+    cfg.rewards["soft_landing"].weight = 0.0
+
+    cfg.rewards["foot_slip"].params["command_threshold"] = 0.05
+    cfg.rewards["foot_slip"].weight = 0.0
 
     cfg.rewards["action_rate_l2"].weight = -0.5
 
