@@ -270,8 +270,9 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     command.rel_heading_envs = 0.0
     command.viz.z_offset = 0.5
 
-    command.ranges.lin_vel_x = (-0.5, 0.5)
+    command.ranges.lin_vel_x = (-0.35, 0.5)
     command.ranges.lin_vel_y = (-0.3, 0.3)
+    command.ranges.ang_vel_z = (-0.75, 0.75)
 
     #---------------------------- Events ----------------------------
     cfg.events["reset_base"].params["pose_range"]["z"] = (0.0, 0.01)
@@ -322,14 +323,9 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "command_name": "twist",
             "velocity_stages": [
                 {
-                    "step": 0, 
-                    "lin_vel_x": (-0.5, 0.5), 
-                    "ang_vel_z": (-0.5, 0.5),
-                },
-                {
                     "step": 5001 * 24,
-                    "lin_vel_x": (-0.75, 1.0),
-                    "ang_vel_z": (-1, 1),
+                    "lin_vel_x": (-0.7, 1.0),
+                    "ang_vel_z": (-1.5, 1.5),
                 },
             ],
         },
@@ -343,14 +339,16 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     #---------------------------- Play mode -------------------------
     if play:
+        cfg.curriculum = {}
+
         # cfg.events["push_robot"].params["velocity_range"] = {
         #     "x": (0.0, 0.0),
         #     "y": (0.0, 0.0),
         # }
 
-        # cfg.commands["twist"].ranges.ang_vel_z = (0.0, 0.0)
-        # cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
         # cfg.commands["twist"].ranges.lin_vel_x = (0.0, 0.0)
+        # cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
+        # cfg.commands["twist"].ranges.ang_vel_z = (0.0, 0.0)
         # cfg.commands["twist"].rel_standing_envs = 0.0
 
         cfg.observations["actor"].enable_corruption = False
