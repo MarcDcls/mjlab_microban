@@ -1,26 +1,21 @@
 """Microban velocity environment"""
 
 import numpy as np
-import math
-import pickle
-import torch
 from copy import deepcopy
 from dataclasses import dataclass
 
 from mjlab.envs import ManagerBasedRlEnvCfg
 from mjlab.envs.mdp.actions import JointPositionActionCfg
-from mjlab.managers.action_manager import ActionTerm, ActionTermCfg
-from mjlab.managers.command_manager import CommandTerm, CommandTermCfg
 from mjlab.managers.scene_entity_config import SceneEntityCfg
 from mjlab.sensor import ContactMatch, ContactSensorCfg
-from mjlab_microban.robot.microban_constants import MICROBAN_ROBOT_CFG, HOME_FRAME
+from mjlab_microban.robot.microban_constants import MICROBAN_ROBOT_CFG
 from mjlab.rl import (
     RslRlModelCfg,
     RslRlOnPolicyRunnerCfg,
     RslRlPpoAlgorithmCfg,
 )
 from mjlab.utils.noise import UniformNoiseCfg as Unoise
-from mjlab.tasks.velocity.mdp import Entity, UniformVelocityCommandCfg
+from mjlab.tasks.velocity.mdp import UniformVelocityCommandCfg
 
 from mjlab.managers.event_manager import EventTermCfg
 from mjlab.managers.reward_manager import RewardTermCfg
@@ -32,17 +27,11 @@ from mjlab.envs.manager_based_rl_env import ManagerBasedRlEnv
 
 from mjlab.tasks.velocity import mdp
 from mjlab.tasks.velocity.velocity_env_cfg import make_velocity_env_cfg
-from mjlab.utils.lab_api.math import quat_apply_inverse
-
-from mjlab_microban.tasks.mdp import *
 
 from mjlab.managers.reward_manager import RewardTermCfg
 from mjlab.managers.observation_manager import ObservationTermCfg
 from mjlab.managers.curriculum_manager import CurriculumTermCfg
-from mjlab.managers.action_manager import ActionTermCfg
 from mjlab.managers.event_manager import EventTermCfg
-from mjlab.managers.event_manager import requires_model_fields
-from mjlab.managers.observation_manager import ObservationGroupCfg
 from mjlab.managers.termination_manager import TerminationTermCfg
 
 from mjlab.envs.mdp import dr
@@ -59,11 +48,10 @@ from mjlab.rl import (
     RslRlOnPolicyRunnerCfg,
     RslRlPpoAlgorithmCfg,
 )
-from mjlab.utils.lab_api.math import sample_uniform, quat_apply_inverse
-from mjlab.utils.lab_api.string import resolve_matching_names_values
-from mjlab.tasks.velocity import mdp as mdp_vel
 from mjlab.envs.mdp.actions import JointPositionActionCfg
-from mjlab.sensor import ContactMatch, ContactSensorCfg, ContactSensor, ObjRef, TerrainHeightSensorCfg, RingPatternCfg
+from mjlab.sensor import ContactMatch, ContactSensorCfg, ObjRef, TerrainHeightSensorCfg, RingPatternCfg
+
+from mjlab_microban.tasks.mdp import reward_based_curriculum, set_command_velocity
 
 SCENE_CFG = SceneCfg(
     terrain=TerrainEntityCfg(
@@ -317,15 +305,19 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     #---------------------------- Curriculum ------------------------
     del cfg.curriculum["terrain_levels"]
 
-    cfg.curriculum["command_vel"] = CurriculumTermCfg(
-        func=mdp.commands_vel,
+    cfg.curriculum["track_linear_velocity_reward"] = CurriculumTermCfg(
+        func=reward_based_curriculum,
         params={
-            "command_name": "twist",
-            "velocity_stages": [
+            "reward_term_name": "track_linear_velocity",
+            "stages": [
                 {
-                    "step": 5001 * 24,
-                    "lin_vel_x": (-0.7, 1.0),
-                    "ang_vel_z": (-1.5, 1.5),
+                    "name": "command velocity increase",
+                    "threshold": 1.5,
+                    "apply": lambda env: set_command_velocity(
+                        env,
+                        lin_vel_x=(-0.7, 1.0),
+                        ang_vel_z=(-1.5, 1.5),
+                    ),
                 },
             ],
         },
