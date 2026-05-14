@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from pathlib import Path
 
 import mujoco
@@ -15,8 +16,28 @@ def get_spec() -> mujoco.MjSpec:
     return mujoco.MjSpec.from_file(str(MICROBAN_XML))
 
 HOME_FRAME = EntityCfg.InitialStateCfg(
-    pos=(0.0, 0.0, 0.1676),
-    joint_pos={r".*": 0.0},
+    pos=(0.0, 0.0, 0.168), #0.1676),
+    joint_pos={
+        "head": float(np.deg2rad(0.0)),
+        "left_shoulder_roll": float(np.deg2rad(10.0)),
+        "right_shoulder_roll": float(np.deg2rad(10.0)),
+        "left_shoulder_pitch": float(np.deg2rad(-10.0)),
+        "right_shoulder_pitch": float(np.deg2rad(10.0)),
+        "left_elbow": float(np.deg2rad(20.0)),
+        "right_elbow": float(np.deg2rad(-20.0)),
+        "left_hip_roll": float(np.deg2rad(-5.0)),
+        "right_hip_roll": float(np.deg2rad(5.0)),
+        "left_hip_pitch": float(np.deg2rad(0.0)),
+        "right_hip_pitch": float(np.deg2rad(0.0)),
+        "left_hip_yaw": float(np.deg2rad(0.0)),
+        "right_hip_yaw": float(np.deg2rad(0.0)),
+        "left_knee": float(np.deg2rad(0.0)),
+        "right_knee": float(np.deg2rad(0.0)),
+        "left_ankle_roll": float(np.deg2rad(-5.0)),
+        "right_ankle_roll": float(np.deg2rad(5.0)),
+        "left_ankle_pitch": float(np.deg2rad(0.0)),
+        "right_ankle_pitch": float(np.deg2rad(0.0)),
+    },
     joint_vel={r".*": 0.0},
 )
 
