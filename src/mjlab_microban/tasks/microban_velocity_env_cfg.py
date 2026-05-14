@@ -51,7 +51,7 @@ from mjlab.rl import (
 from mjlab.envs.mdp.actions import JointPositionActionCfg
 from mjlab.sensor import ContactMatch, ContactSensorCfg, ObjRef, TerrainHeightSensorCfg, RingPatternCfg
 
-from mjlab_microban.tasks.mdp import reward_based_curriculum, set_command_velocity
+from mjlab_microban.tasks.mdp import reward_based_curriculum, set_command_velocity, no_stepping_penalty
 
 SCENE_CFG = SceneCfg(
     terrain=TerrainEntityCfg(
@@ -239,7 +239,18 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.rewards["air_time"].params["threshold_max"] = 0.25
     cfg.rewards["air_time"].weight = 2.0
 
-    cfg.rewards["soft_landing"].weight = 0.0
+    cfg.rewards["no_stepping"] = RewardTermCfg(
+        func=no_stepping_penalty,
+        weight=-1.0,
+        params={
+            "sensor_name": feet_ground_sensor_cfg.name,
+            "command_name": "twist",
+            "command_threshold": walking_threshold,
+        },
+    )
+    
+    del cfg.rewards["soft_landing"]
+    # cfg.rewards["soft_landing"].weight = 0.0
 
     cfg.rewards["foot_slip"].params["command_threshold"] = walking_threshold
     cfg.rewards["foot_slip"].weight = -0.1

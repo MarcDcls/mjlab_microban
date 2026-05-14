@@ -41,6 +41,30 @@ class reward_based_curriculum:
             self.current_stage += 1
             self.stage_first_step = env.common_step_counter
 
+def no_stepping_penalty(
+    env: ManagerBasedRlEnv,
+    sensor_name: str,
+    command_name: str = "twist",
+    command_threshold: float = 0.01,
+) -> torch.Tensor:
+    """
+    Penalizes feet in the air when the commanded speed is below threshold.
+    Discourages marching in place when the robot should stand still.
+    Returns the count of airborne feet per environment (use with a negative weight).
+    """
+    command = env.command_manager.get_command(command_name)  # (N, 3)
+    cmd_speed = torch.norm(command[:, :2], dim=-1) + torch.abs(command[:, 2])
+    below_threshold = cmd_speed < command_threshold
+
+    sensor = env.scene.sensors[sensor_name]
+    found = sensor.data.found  # (N, num_feet) or (N, num_feet, num_slots)
+    if found.dim() == 3:
+        found = found.any(dim=-1)  # (N, num_feet)
+    in_air = ~found.bool()
+
+    return in_air.float().sum(dim=-1) * below_threshold.float()
+
+
 def set_command_velocity(env, lin_vel_x=None, lin_vel_y=None, ang_vel_z=None):
     """
     Helper function to set the command velocity parameters in the environment.
