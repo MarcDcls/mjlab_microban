@@ -241,14 +241,14 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     cfg.rewards["no_stepping"] = RewardTermCfg(
         func=no_stepping_penalty,
-        weight=-1.0,
+        weight=-0.1,
         params={
             "sensor_name": feet_ground_sensor_cfg.name,
             "command_name": "twist",
             "command_threshold": walking_threshold,
         },
     )
-    
+
     del cfg.rewards["soft_landing"]
     # cfg.rewards["soft_landing"].weight = 0.0
 
