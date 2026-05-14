@@ -131,19 +131,19 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         debug_vis=False,
     )
 
-    # self_collision_sensor_cfg = ContactSensorCfg(
-    #     name="self_collision",
-    #     primary=ContactMatch(mode="subtree", pattern="trunk", entity="robot"),
-    #     secondary=ContactMatch(mode="subtree", pattern="trunk", entity="robot"),
-    #     fields=("found",),
-    #     reduce="none",
-    #     num_slots=1,
-    # )
+    self_collision_sensor_cfg = ContactSensorCfg(
+        name="self_collision",
+        primary=ContactMatch(mode="subtree", pattern="trunk", entity="robot"),
+        secondary=ContactMatch(mode="subtree", pattern="trunk", entity="robot"),
+        fields=("found",),
+        reduce="none",
+        num_slots=1,
+    )
     
     cfg.scene.sensors = (
         feet_ground_sensor_cfg,
         foot_height_scan_cfg,
-        # self_collision_sensor_cfg,
+        self_collision_sensor_cfg,
     )
 
     #---------------------------- Terrain ---------------------------
@@ -240,16 +240,14 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     cfg.rewards["foot_clearance"].params["command_threshold"] = 0.05
     cfg.rewards["foot_clearance"].params["target_height"] = 0.02
-    # cfg.rewards["foot_clearance"].weight = 0.0
 
     cfg.rewards["foot_swing_height"].params["command_threshold"] = 0.05
     cfg.rewards["foot_swing_height"].params["target_height"] = 0.02
-    # cfg.rewards["foot_swing_height"].weight = 0.0
 
     cfg.rewards["air_time"].params["command_threshold"] = 0.05
     cfg.rewards["air_time"].params["threshold_min"] = 0.10
     cfg.rewards["air_time"].params["threshold_max"] = 0.25
-    cfg.rewards["air_time"].weight = 1.0
+    cfg.rewards["air_time"].weight = 2.0
 
     cfg.rewards["soft_landing"].weight = 0.0
 
@@ -258,11 +256,11 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     cfg.rewards["action_rate_l2"].weight = -0.1
 
-    # cfg.rewards["self_collisions"] = RewardTermCfg(
-    #     func=mdp.self_collision_cost,
-    #     weight=-1.0,
-    #     params={"sensor_name": self_collision_sensor_cfg.name},
-    # )
+    cfg.rewards["self_collisions"] = RewardTermCfg(
+        func=mdp.self_collision_cost,
+        weight=-1.0,
+        params={"sensor_name": self_collision_sensor_cfg.name},
+    )
 
     #---------------------------- Commands --------------------------
     command: UniformVelocityCommandCfg = cfg.commands["twist"]
@@ -270,7 +268,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     command.rel_heading_envs = 0.0
     command.viz.z_offset = 0.5
 
-    command.ranges.lin_vel_x = (-0.3, 0.3)
+    command.ranges.lin_vel_x = (-0.5, 0.5)
     command.ranges.lin_vel_y = (-0.3, 0.3)
 
     #---------------------------- Events ----------------------------
@@ -293,25 +291,25 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     }
     cfg.events["base_com"].params["asset_cfg"].body_names = ("trunk",)
 
-    # cfg.events["dof_armature_randomization"] = EventTermCfg(
-    #     mode="startup",
-    #     func=dr.joint_armature,
-    #     params={
-    #         "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
-    #         "operation": "scale",
-    #         "ranges": (0.5, 1.5),
-    #     },
-    # )
+    cfg.events["dof_armature_randomization"] = EventTermCfg(
+        mode="startup",
+        func=dr.joint_armature,
+        params={
+            "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
+            "operation": "scale",
+            "ranges": (0.8, 1.2),
+        },
+    )
 
-    # cfg.events["dof_friction_randomization"] = EventTermCfg(
-    #     mode="startup",
-    #     func=dr.joint_friction,
-    #     params={
-    #         "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
-    #         "operation": "abs",
-    #         "ranges": (0.0, 0.1),
-    #     },
-    # )
+    cfg.events["dof_friction_randomization"] = EventTermCfg(
+        mode="startup",
+        func=dr.joint_friction,
+        params={
+            "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
+            "operation": "scale",
+            "ranges": (0.8, 1.2),
+        },
+    )
 
     #---------------------------- Curriculum ------------------------
     del cfg.curriculum["terrain_levels"]
@@ -323,45 +321,17 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "velocity_stages": [
                 {
                     "step": 0, 
-                    "lin_vel_x": (-0.3, 0.3), 
+                    "lin_vel_x": (-0.5, 0.5), 
                     "ang_vel_z": (-0.5, 0.5),
                 },
-                # {
-                #     "step": 5000 * 24,
-                #     "lin_vel_x": (-0.5, 0.6),
-                #     "ang_vel_z": (-1, 1),
-                # },
-                # {
-                #     "step": 10000 * 24, 
-                #     "lin_vel_x": (-0.75, 1.0),
-                # },
+                {
+                    "step": 5001 * 24,
+                    "lin_vel_x": (-0.75, 1.0),
+                    "ang_vel_z": (-1, 1),
+                },
             ],
         },
     )
-
-    # cfg.curriculum["action_rate_l2"] = CurriculumTermCfg(
-    #     func=mdp.reward_weight,
-    #     params={
-    #         "reward_name": "action_rate_l2",
-    #         "weight_stages": [
-    #             {"step": 0, "weight": -0.1},
-    #             # {"step": 2000 * 24, "weight": -0.15},
-    #         ],
-    #     },
-    # )
-
-    # cfg.curriculum["soft_landing"] = CurriculumTermCfg(
-    #     func=mdp.reward_weight,
-    #     params={
-    #         "reward_name": "soft_landing",
-    #         "weight_stages": [
-    #             {"step": 0, "weight": -1e-4},
-    #             {"step": 2000 * 24, "weight": -5e-4},
-    #             {"step": 3000 * 24, "weight": -1e-3},
-    #             {"step": 4000 * 24, "weight": -5e-3},
-    #         ],
-    #     },
-    # )
 
     #---------------------------- Terminations ----------------------
     cfg.terminations["fell_over"] = TerminationTermCfg(
