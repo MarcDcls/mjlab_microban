@@ -221,10 +221,12 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         r".*ankle_roll.*": 0.2,
     }
 
+    walking_threshold = 0.025
+
     cfg.rewards["pose"].params["std_standing"] = std_standing
     cfg.rewards["pose"].params["std_walking"] = std_walking
     cfg.rewards["pose"].params["std_running"] = std_walking
-    cfg.rewards["pose"].params["walking_threshold"] = 0.01
+    cfg.rewards["pose"].params["walking_threshold"] = walking_threshold
     cfg.rewards["pose"].weight = 1.0
 
     cfg.rewards["upright"].params["asset_cfg"].body_names = ("trunk",)
@@ -238,20 +240,20 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     for reward_name in ["foot_clearance", "foot_slip"]:
         cfg.rewards[reward_name].params["asset_cfg"].site_names = foot_site_names
 
-    cfg.rewards["foot_clearance"].params["command_threshold"] = 0.05
+    cfg.rewards["foot_clearance"].params["command_threshold"] = walking_threshold
     cfg.rewards["foot_clearance"].params["target_height"] = 0.02
 
-    cfg.rewards["foot_swing_height"].params["command_threshold"] = 0.05
+    cfg.rewards["foot_swing_height"].params["command_threshold"] = walking_threshold
     cfg.rewards["foot_swing_height"].params["target_height"] = 0.02
 
-    cfg.rewards["air_time"].params["command_threshold"] = 0.05
+    cfg.rewards["air_time"].params["command_threshold"] = walking_threshold
     cfg.rewards["air_time"].params["threshold_min"] = 0.10
     cfg.rewards["air_time"].params["threshold_max"] = 0.25
     cfg.rewards["air_time"].weight = 2.0
 
     cfg.rewards["soft_landing"].weight = 0.0
 
-    cfg.rewards["foot_slip"].params["command_threshold"] = 0.05
+    cfg.rewards["foot_slip"].params["command_threshold"] = walking_threshold
     cfg.rewards["foot_slip"].weight = -0.1
 
     cfg.rewards["action_rate_l2"].weight = -0.1
