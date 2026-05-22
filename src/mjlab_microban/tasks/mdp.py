@@ -70,8 +70,8 @@ def set_command_velocity(env, lin_vel_x=None, lin_vel_y=None, ang_vel_z=None):
     Helper function to set the command velocity parameters in the environment.
     """
     if lin_vel_x is not None:
-        env.command_manager.get_term_cfg("linear_velocity").params["lin_vel_x"] = lin_vel_x
+        env.command_manager.get_term_cfg("twist").ranges.lin_vel_x = lin_vel_x
     if lin_vel_y is not None:
-        env.command_manager.get_term_cfg("linear_velocity").params["lin_vel_y"] = lin_vel_y
+        env.command_manager.get_term_cfg("twist").ranges.lin_vel_y = lin_vel_y
     if ang_vel_z is not None:
-        env.command_manager.get_term_cfg("angular_velocity").params["ang_vel_z"] = ang_vel_z
+        env.command_manager.get_term_cfg("twist").ranges.ang_vel_z = ang_vel_z
