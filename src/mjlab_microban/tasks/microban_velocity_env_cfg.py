@@ -214,7 +214,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         r".*ankle_roll.*": 0.2,
     }
 
-    walking_threshold = 0.025
+    walking_threshold = 0.01
 
     cfg.rewards["pose"].params["std_standing"] = std_standing
     cfg.rewards["pose"].params["std_walking"] = std_walking
