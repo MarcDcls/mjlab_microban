@@ -263,6 +263,12 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         params={"sensor_name": self_collision_sensor_cfg.name},
     )
 
+    del cfg.rewards["track_linear_velocity"]
+    del cfg.rewards["track_angular_velocity"]
+    del cfg.rewards["pose"]
+    del cfg.rewards["upright"]
+    del cfg.rewards["body_ang_vel"]
+    del cfg.rewards["angular_momentum"]
     #---------------------------- Commands --------------------------
     command: UniformVelocityCommandCfg = cfg.commands["twist"]
     command.rel_standing_envs = 0.1
@@ -353,6 +359,9 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         # cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
         # cfg.commands["twist"].ranges.ang_vel_z = (0.0, 0.0)
         # cfg.commands["twist"].rel_standing_envs = 0.0
+
+        # cfg.commands["twist"].ranges.lin_vel_x = (-0.75, 1.0)
+        # cfg.commands["twist"].ranges.ang_vel_z = (-1.0, 1.0)
 
         cfg.observations["actor"].enable_corruption = False
 

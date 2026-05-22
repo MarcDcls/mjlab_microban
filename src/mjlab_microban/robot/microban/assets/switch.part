@@ -1,13 +1,13 @@
 {
     "configuration": "default",
     "documentId": "d424992a192a8ce34ffce163",
-    "documentMicroversion": "511375e41ac1659318ec660a",
-    "elementId": "af18e589022edb9db8f871bd",
+    "documentMicroversion": "9f40d1a6201f3fd4d73cd90d",
+    "elementId": "a4ed48ced4c60042e4f4f2ba",
     "fullConfiguration": "default",
-    "id": "MAimzn3qH/FMcDb5g",
+    "id": "MhJOFMkIpL/NBK6K0",
     "isStandardContent": false,
-    "name": "femur <1>",
-    "partId": "RFDD",
+    "name": "switch <1>",
+    "partId": "J/D",
     "suppressed": false,
     "type": "Part"
 }
