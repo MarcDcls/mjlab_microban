@@ -366,6 +366,14 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         # cfg.commands["twist"].ranges.lin_vel_x = (-0.75, 1.0)
         # cfg.commands["twist"].ranges.ang_vel_z = (-1.0, 1.0)
 
+        # Can be used to edit neutral pose with a zero agent
+        # cfg.events["reset_base"].params["pose_range"]["x"] = (0.0, 0.0)
+        # cfg.events["reset_base"].params["pose_range"]["y"] = (0.0, 0.0)
+        # cfg.events["reset_base"].params["pose_range"]["z"] = (0.3, 0.3)
+        # cfg.events["reset_base"].params["pose_range"]["yaw"] = (0.0, 0.0)
+        # cfg.events["reset_base"].interval_range_s = (0.0, 0.0)
+        # cfg.events["reset_base"].mode = "interval"
+
         cfg.observations["actor"].enable_corruption = False
 
         # Can be used to print something every step
