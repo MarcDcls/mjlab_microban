@@ -314,7 +314,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     )
 
     #---------------------------- Curriculum ------------------------
-    del cfg.curriculum["terrain_levels"]
+    cfg.curriculum = {}
 
     cfg.curriculum["track_linear_velocity_reward"] = CurriculumTermCfg(
         func=reward_based_curriculum,
