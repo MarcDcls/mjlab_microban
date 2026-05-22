@@ -75,3 +75,14 @@ def set_command_velocity(env, lin_vel_x=None, lin_vel_y=None, ang_vel_z=None):
         env.command_manager.get_term_cfg("twist").ranges.lin_vel_y = lin_vel_y
     if ang_vel_z is not None:
         env.command_manager.get_term_cfg("twist").ranges.ang_vel_z = ang_vel_z
+
+def penalize_stepping_while_standing(
+    env: ManagerBasedRlEnv,
+    air_time_weight: float,
+    no_stepping_penalty_weight: float,
+) -> torch.Tensor:
+    """
+    Updating the air_time and no_stepping reward weights to penalize stepping while standing.
+    """
+    env.reward_manager.get_term_cfg("air_time").weight = air_time_weight
+    env.reward_manager.get_term_cfg("no_stepping").weight = no_stepping_penalty_weight

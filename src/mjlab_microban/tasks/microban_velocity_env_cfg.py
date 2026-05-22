@@ -51,7 +51,12 @@ from mjlab.rl import (
 from mjlab.envs.mdp.actions import JointPositionActionCfg
 from mjlab.sensor import ContactMatch, ContactSensorCfg, ObjRef, TerrainHeightSensorCfg, RingPatternCfg
 
-from mjlab_microban.tasks.mdp import reward_based_curriculum, set_command_velocity, no_stepping_penalty
+from mjlab_microban.tasks.mdp import (
+    reward_based_curriculum, 
+    set_command_velocity, 
+    no_stepping_penalty, 
+    penalize_stepping_while_standing,
+)
 
 SCENE_CFG = SceneCfg(
     terrain=TerrainEntityCfg(
@@ -239,15 +244,15 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.rewards["air_time"].params["threshold_max"] = 0.25
     cfg.rewards["air_time"].weight = 1.0
 
-    # cfg.rewards["no_stepping"] = RewardTermCfg(
-    #     func=no_stepping_penalty,
-    #     weight=-0.1,
-    #     params={
-    #         "sensor_name": feet_ground_sensor_cfg.name,
-    #         "command_name": "twist",
-    #         "command_threshold": walking_threshold,
-    #     },
-    # )
+    cfg.rewards["no_stepping"] = RewardTermCfg(
+        func=no_stepping_penalty,
+        weight=0.0,
+        params={
+            "sensor_name": feet_ground_sensor_cfg.name,
+            "command_name": "twist",
+            "command_threshold": walking_threshold,
+        },
+    )
 
     del cfg.rewards["soft_landing"]
     # cfg.rewards["soft_landing"].weight = 0.0
@@ -322,21 +327,62 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "reward_term_name": "track_linear_velocity",
             "stages": [
                 {
-                    "name": "command velocity increase 1",
+                    "name": "command lin_vel increase 1",
                     "threshold": 1.5,
                     "apply": lambda env: set_command_velocity(
                         env,
                         lin_vel_x=(-0.5, 0.75),
-                        ang_vel_z=(-1.15, 1.15),
                     ),
                 },
                 {
-                    "name": "command velocity increase 2",
+                    "name": "command lin_vel increase 2",
                     "threshold": 1.5,
                     "apply": lambda env: set_command_velocity(
                         env,
                         lin_vel_x=(-0.7, 1.0),
+                    ),
+                },
+            ],
+        },
+    )
+
+    cfg.curriculum["track_angular_velocity_reward"] = CurriculumTermCfg(
+        func=reward_based_curriculum,
+        params={
+            "reward_term_name": "track_angular_velocity",
+            "stages": [
+                {
+                    "name": "command ang_vel increase 1",
+                    "threshold": 1.0,
+                    "apply": lambda env: set_command_velocity(
+                        env,
+                        ang_vel_z=(-1.15, 1.15),
+                    ),
+                },
+                {
+                    "name": "command ang_vel increase 2",
+                    "threshold": 1.0,
+                    "apply": lambda env: set_command_velocity(
+                        env,
                         ang_vel_z=(-1.5, 1.5),
+                    ),
+                },
+            ],
+        },
+    )
+
+    cfg.curriculum["air_time_reward"] = CurriculumTermCfg(
+        func=reward_based_curriculum,
+        params={
+            "reward_term_name": "air_time",
+            "stages": [
+                {
+                    "name": "penalize stepping while standing",
+                    "threshold": 0.4,
+                    "apply": lambda env: penalize_stepping_while_standing(
+                        env,
+                        air_time_weight=0.1,
+                        no_stepping_penalty_weight=-0.1,
                     ),
                 },
             ],
