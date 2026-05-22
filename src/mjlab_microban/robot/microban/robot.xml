@@ -43,6 +43,8 @@
       <geom type="mesh" class="visual" pos="0 -0.044 0.081" quat="0.707107 0.707107 0 0" mesh="xl330_without_horn" material="xl330_without_horn_material"/>
       <!-- Part steel_shim -->
       <!-- Part pelvis__configuration_right -->
+      <geom class="collision" pos="0 0 0.05375" quat="0.707107 0 0 0.707107" type="box" size="0.054 0.008 0.05375"/>
+      <geom class="collision" pos="0 0 0.05775" quat="0.707107 0 0 0.707107" type="box" size="0.029 0.033 0.04275"/>
       <geom type="mesh" class="visual" pos="0.00575 -0.036 -0.0484" quat="0.707107 0 0 0.707107" mesh="pelvis__configuration_right" material="pelvis__configuration_right_material"/>
       <!-- Part stp39__configuration__2_2x8_3 -->
       <!-- Part arm_bearing_support__configuration_right_2 -->
@@ -159,6 +161,8 @@
             <!-- Part stp39__configuration__2x6_17 -->
             <!-- Part stp39__configuration__2x6_18 -->
             <!-- Part radius -->
+            <geom class="collision" pos="-0 0 0.0135" quat="0.707107 -0 -0 -0.707107" type="cylinder" size="0.009 0.01675"/>
+            <geom class="collision" pos="-0 -0.067014 0.0135" quat="0.707107 -0 -0 -0.707107" type="cylinder" size="0.00525 0.008"/>
             <geom type="mesh" class="visual" pos="0 0.027 0.0472" quat="0.5 -0.5 -0.5 -0.5" mesh="radius" material="radius_material"/>
             <!-- Part stp39__configuration__2x6_19 -->
             <!-- Part dc15_a01_idle_cap_dummy -->
@@ -202,6 +206,7 @@
           <!-- Part stp39__configuration__2_2x8_29 -->
           <!-- Part stp39__configuration__2_2x8_30 -->
           <!-- Part hip_dbl_block__configuration_right -->
+          <geom class="collision" pos="-0 0.02075 0.02575" quat="0 -0 0.707107 -0.707107" type="box" size="0.0135 0.02525 0.00625"/>
           <geom type="mesh" class="visual" pos="0 0.027 0.02575" quat="0 -0 0.707107 -0.707107" mesh="hip_dbl_block__configuration_right" material="hip_dbl_block__configuration_right_material"/>
           <!-- Part stp39__configuration__2_2x8_31 -->
           <!-- Part xl330_without_horn_7 -->
@@ -220,16 +225,9 @@
             <inertial pos="-0.0109472 -0.0366847 -0.0147025" mass="0.014726" fullinertia="1.12665e-05 4.38335e-06 8.95932e-06 -1.12592e-06 1.333e-09 -4.521e-09"/>
             <!-- Part stp39__configuration__2x6_33 -->
             <!-- Part femur__configuration_right -->
-            <geom class="collision" pos="-0.015 -0.0335001 -0.03175" quat="0.5 -0.5 0.5 0.5" type="box" size="0.00125 0.009 0.022228"/>
-            <geom class="collision" pos="-0.008818 -0.00881806 -0.03175" quat="0.653281 -0.270598 0.653281 0.270598" type="box" size="0.00125 0.009 0.0124705"/>
-            <geom class="collision" pos="-0.011318 -0.0556821 -0.03175" quat="0.270598 -0.653281 0.270598 0.653281" type="box" size="0.00125 0.009 0.008935"/>
-            <geom class="collision" pos="-0.005 -0.0620001 -0.03175" quat="0 -0.707107 0.707107 0" type="cylinder" size="0.009 0.00125"/>
-            <geom class="collision" pos="-0 -5.7907e-08 -0.03175" quat="0 -0.707107 0.707107 0" type="cylinder" size="0.009 0.00125"/>
             <geom class="collision" pos="-0.015 -0.0335001 0.00275" quat="0.5 -0.5 0.5 0.5" type="box" size="0.00125 0.009 0.022228"/>
             <geom class="collision" pos="-0.008818 -0.00881806 0.00275" quat="0.653281 -0.270598 0.653281 0.270598" type="box" size="0.00125 0.009 0.0124705"/>
             <geom class="collision" pos="-0.011318 -0.0556821 0.00275" quat="0.270598 -0.653281 0.270598 0.653281" type="box" size="0.00125 0.009 0.008935"/>
-            <geom class="collision" pos="-0.005 -0.0620001 0.00275" quat="0 -0.707107 0.707107 0" type="cylinder" size="0.009 0.00125"/>
-            <geom class="collision" pos="0 -5.7907e-08 0.00275" quat="0 -0.707107 0.707107 0" type="cylinder" size="0.009 0.00125"/>
             <geom type="mesh" class="visual" pos="0.003 -0.132713 -0.0145" quat="0.5 -0.5 0.5 0.5" mesh="femur__configuration_right" material="femur__configuration_right_material"/>
             <!-- Part stp39__configuration__2x6_34 -->
             <!-- Part stp39__configuration__2x6_35 -->
@@ -259,16 +257,9 @@
               <!-- Part xl330_3 -->
               <geom type="mesh" class="visual" pos="0 -0 -0.0065" quat="1 -0 -0 0" mesh="xl330" material="xl330_material"/>
               <!-- Part tibia__configuration_right -->
-              <geom class="collision" pos="0.017 -0.0444631 -0.03175" quat="0.5 -0.5 0.5 0.5" type="box" size="0.00125 0.009 0.0115"/>
-              <geom class="collision" pos="0.0138 -0.0554431 -0.03175" quat="0.653281 -0.270598 0.653281 0.270598" type="box" size="0.00125 0.009 0.00825"/>
-              <geom class="collision" pos="0.01266 -0.0346331 -0.03175" quat="0.270598 -0.653281 0.270598 0.653281" type="box" size="0.00125 0.0106065 0.00825"/>
-              <geom class="collision" pos="0.008 -0.0612131 -0.03175" quat="0 -0.707107 0.707107 0" type="cylinder" size="0.009 0.00125"/>
               <geom class="collision" pos="0.017 -0.0444631 0.00275" quat="0.5 -0.5 0.5 0.5" type="box" size="0.00125 0.009 0.0115"/>
               <geom class="collision" pos="0.0138 -0.0554431 0.00275" quat="0.653281 -0.270598 0.653281 0.270598" type="box" size="0.00125 0.009 0.00825"/>
-              <geom class="collision" pos="0.01266 -0.0346331 0.00275" quat="0.270598 -0.653281 0.270598 0.653281" type="box" size="0.00125 0.0106065 0.00825"/>
-              <geom class="collision" pos="0.008 -0.0612131 0.00275" quat="0 -0.707107 0.707107 0" type="cylinder" size="0.009 0.00125"/>
-              <geom class="collision" pos="-0 -0.0220001 -0.0145" quat="0.5 -0.5 0.5 0.5" type="box" size="0.0185 0.0125 0.0025"/>
-              <geom class="collision" pos="0 -0.00501306 -0.0145" quat="0.5 -0.5 0.5 0.5" type="box" size="0.0115 0.01 0.0145"/>
+              <geom class="collision" pos="0.00675 -0.0287131 0.00275" quat="0.270598 -0.653281 0.270598 0.653281" type="box" size="0.00125 0.0106065 0.016617"/>
               <geom class="collision" pos="0.0117 -0.0236231 -0.0145" quat="0.270598 -0.653281 0.270598 0.653281" type="box" size="0.0185 0.0035 0.0023295"/>
               <geom type="mesh" class="visual" pos="0.008 -0.0707131 -0.0145" quat="0.5 -0.5 0.5 0.5" mesh="tibia__configuration_right" material="tibia__configuration_right_material"/>
               <!-- Part stp39__configuration__2x6_53 -->
@@ -315,12 +306,12 @@
                   <!-- Part stp39__configuration__2x6_60 -->
                   <!-- Part stp39__configuration__2x6_61 -->
                   <!-- Part foot__configuration_right -->
-                  <geom class="collision" pos="-0 -0.02175 0.042" quat="0 0 0.707107 0.707107" type="box" size="0.0225 0.04 0.00125"/>
-                  <geom class="collision" pos="-0 -0.02175 0.042" quat="0 0 0.707107 0.707107" type="box" size="0.0175 0.045 0.00125"/>
-                  <geom class="collision" pos="-0.0175 -0.02175 0.002" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
-                  <geom class="collision" pos="0.0175 -0.02175 0.002" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
-                  <geom class="collision" pos="-0.0175 -0.02175 0.082" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
-                  <geom class="collision" pos="0.0175 -0.02175 0.082" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
+                  <geom name="right_foot_collision_1" class="collision" pos="-0 -0.02175 0.042" quat="0 0 0.707107 0.707107" type="box" size="0.0225 0.04 0.00125"/>
+                  <geom name="right_foot_collision_2" class="collision" pos="-0 -0.02175 0.042" quat="0 0 0.707107 0.707107" type="box" size="0.0175 0.045 0.00125"/>
+                  <geom name="right_foot_collision_3" class="collision" pos="-0.0175 -0.02175 0.002" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
+                  <geom name="right_foot_collision_4" class="collision" pos="0.0175 -0.02175 0.002" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
+                  <geom name="right_foot_collision_5" class="collision" pos="-0.0175 -0.02175 0.082" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
+                  <geom name="right_foot_collision_6" class="collision" pos="0.0175 -0.02175 0.082" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
                   <geom type="mesh" class="visual" pos="-0 -0.0095 0.0385" quat="0 0 0.707107 0.707107" mesh="foot__configuration_right" material="foot__configuration_right_material"/>
                   <!-- Part stp39__configuration__2x6_62 -->
                   <!-- Part stp39__configuration__2x6_63 -->
@@ -379,6 +370,8 @@
             <!-- Part stp39__configuration__2x6_77 -->
             <!-- Part stp39__configuration__2x6_78 -->
             <!-- Part radius_2 -->
+            <geom class="collision" pos="-0 -0 -0.0135" quat="0 0.707107 0.707107 -0" type="cylinder" size="0.009 0.01675"/>
+            <geom class="collision" pos="-0 0.067014 -0.0135" quat="0 0.707107 0.707107 -0" type="cylinder" size="0.00525 0.008"/>
             <geom type="mesh" class="visual" pos="-0 -0.027 -0.0472" quat="0.5 0.5 0.5 -0.5" mesh="radius" material="radius_material"/>
             <!-- Part stp39__configuration__2x6_79 -->
             <!-- Part dc15_a01_idle_cap_dummy_4 -->
@@ -422,6 +415,7 @@
           <!-- Part stp39__configuration__2_2x8_53 -->
           <!-- Part stp39__configuration__2_2x8_54 -->
           <!-- Part hip_dbl_block__configuration_left -->
+          <geom class="collision" pos="-0 0.02075 0.02575" quat="0 -0 0.707107 -0.707107" type="box" size="0.0135 0.02525 0.00625"/>
           <geom type="mesh" class="visual" pos="0.027 0.027 0.02575" quat="0 -0 0.707107 -0.707107" mesh="hip_dbl_block__configuration_left" material="hip_dbl_block__configuration_left_material"/>
           <!-- Part stp39__configuration__2_2x8_55 -->
           <!-- Part xl330_without_horn_10 -->
@@ -443,13 +437,6 @@
             <geom class="collision" pos="0.015 0.0335001 -0.03175" quat="0.5 0.5 0.5 -0.5" type="box" size="0.00125 0.009 0.022228"/>
             <geom class="collision" pos="0.008818 0.00881806 -0.03175" quat="0.270598 0.653281 0.270598 -0.653281" type="box" size="0.00125 0.009 0.0124705"/>
             <geom class="collision" pos="0.011318 0.0556821 -0.03175" quat="0.653281 0.270598 0.653281 -0.270598" type="box" size="0.00125 0.009 0.008935"/>
-            <geom class="collision" pos="0.005 0.0620001 -0.03175" quat="0 0.707107 0.707107 0" type="cylinder" size="0.009 0.00125"/>
-            <geom class="collision" pos="-0 5.7907e-08 -0.03175" quat="0 0.707107 0.707107 0" type="cylinder" size="0.009 0.00125"/>
-            <geom class="collision" pos="0.015 0.0335001 0.00275" quat="0.5 0.5 0.5 -0.5" type="box" size="0.00125 0.009 0.022228"/>
-            <geom class="collision" pos="0.008818 0.00881806 0.00275" quat="0.270598 0.653281 0.270598 -0.653281" type="box" size="0.00125 0.009 0.0124705"/>
-            <geom class="collision" pos="0.011318 0.0556821 0.00275" quat="0.653281 0.270598 0.653281 -0.270598" type="box" size="0.00125 0.009 0.008935"/>
-            <geom class="collision" pos="0.005 0.0620001 0.00275" quat="0 0.707107 0.707107 0" type="cylinder" size="0.009 0.00125"/>
-            <geom class="collision" pos="-0 5.7907e-08 0.00275" quat="0 0.707107 0.707107 0" type="cylinder" size="0.009 0.00125"/>
             <geom type="mesh" class="visual" pos="-0.003 0.132713 -0.0515" quat="0.5 0.5 0.5 -0.5" mesh="femur__configuration_left" material="femur__configuration_left_material"/>
             <!-- Part stp39__configuration__2x6_94 -->
             <!-- Part stp39__configuration__2x6_95 -->
@@ -481,14 +468,7 @@
               <!-- Part tibia__configuration_left -->
               <geom class="collision" pos="-0.017 0.0444631 -0.0317" quat="0.5 0.5 0.5 -0.5" type="box" size="0.00125 0.009 0.0115"/>
               <geom class="collision" pos="-0.0138 0.0554431 -0.03175" quat="0.270598 0.653281 0.270598 -0.653281" type="box" size="0.00125 0.009 0.00825"/>
-              <geom class="collision" pos="-0.01266 0.0346331 -0.03175" quat="0.653281 0.270598 0.653281 -0.270598" type="box" size="0.00125 0.0106065 0.00825"/>
-              <geom class="collision" pos="-0.008 0.0612131 -0.03175" quat="0 -0.707107 -0.707107 0" type="cylinder" size="0.009 0.00125"/>
-              <geom class="collision" pos="-0.017 0.0444631 0.00275" quat="0.5 0.5 0.5 -0.5" type="box" size="0.00125 0.009 0.0115"/>
-              <geom class="collision" pos="-0.0138 0.0554431 0.00275" quat="0.270598 0.653281 0.270598 -0.653281" type="box" size="0.00125 0.009 0.00825"/>
-              <geom class="collision" pos="-0.01266 0.0346331 0.00275" quat="0.653281 0.270598 0.653281 -0.270598" type="box" size="0.00125 0.0106065 0.00825"/>
-              <geom class="collision" pos="-0.008 0.0612131 0.00275" quat="0 -0.707107 -0.707107 0" type="cylinder" size="0.009 0.00125"/>
-              <geom class="collision" pos="-0 0.0220001 -0.0145" quat="0.5 0.5 0.5 -0.5" type="box" size="0.0185 0.0125 0.0025"/>
-              <geom class="collision" pos="-0 0.00501306 -0.0145" quat="0.5 0.5 0.5 -0.5" type="box" size="0.0115 0.01 0.0145"/>
+              <geom class="collision" pos="-0.00675 0.0287131 -0.03175" quat="0.653281 0.270598 0.653281 -0.270598" type="box" size="0.00125 0.0106065 0.016617"/>
               <geom class="collision" pos="-0.0117 0.0236231 -0.0145" quat="0.653281 0.270598 0.653281 -0.270598" type="box" size="0.0185 0.0035 0.0023295"/>
               <geom type="mesh" class="visual" pos="-0.008 0.0707131 -0.0515" quat="0.5 0.5 0.5 -0.5" mesh="tibia__configuration_left" material="tibia__configuration_left_material"/>
               <!-- Part stp39__configuration__2x6_113 -->
@@ -535,12 +515,12 @@
                   <!-- Part stp39__configuration__2x6_120 -->
                   <!-- Part stp39__configuration__2x6_121 -->
                   <!-- Part foot__configuration_right_2 -->
-                  <geom class="collision" pos="-0 -0.02175 0.042" quat="0 0 0.707107 0.707107" type="box" size="0.0225 0.04 0.00125"/>
-                  <geom class="collision" pos="-0 -0.02175 0.042" quat="0 0 0.707107 0.707107" type="box" size="0.0175 0.045 0.00125"/>
-                  <geom class="collision" pos="-0.0175 -0.02175 0.002" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
-                  <geom class="collision" pos="0.0175 -0.02175 0.002" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
-                  <geom class="collision" pos="-0.0175 -0.02175 0.082" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
-                  <geom class="collision" pos="0.0175 -0.02175 0.082" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
+                  <geom name="left_foot_collision_1" class="collision" pos="-0 -0.02175 0.042" quat="0 0 0.707107 0.707107" type="box" size="0.0225 0.04 0.00125"/>
+                  <geom name="left_foot_collision_2" class="collision" pos="-0 -0.02175 0.042" quat="0 0 0.707107 0.707107" type="box" size="0.0175 0.045 0.00125"/>
+                  <geom name="left_foot_collision_3" class="collision" pos="-0.0175 -0.02175 0.002" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
+                  <geom name="left_foot_collision_4" class="collision" pos="0.0175 -0.02175 0.002" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
+                  <geom name="left_foot_collision_5" class="collision" pos="-0.0175 -0.02175 0.082" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
+                  <geom name="left_foot_collision_6" class="collision" pos="0.0175 -0.02175 0.082" quat="0.270598 -0.270598 -0.653281 -0.653281" type="box" size="0.00353553 0.00353553 0.00125"/>
                   <geom type="mesh" class="visual" pos="-0 -0.0095 0.0385" quat="0 0 0.707107 0.707107" mesh="foot__configuration_right" material="foot__configuration_right_material"/>
                   <!-- Part stp39__configuration__2x6_122 -->
                   <!-- Part stp39__configuration__2x6_123 -->
@@ -556,31 +536,31 @@
     </body>
   </worldbody>
   <asset>
-    <mesh file="switch.stl"/>
-    <mesh file="tibia__configuration_left.stl"/>
-    <mesh file="radius.stl"/>
-    <mesh file="chest__configuration_right.stl"/>
-    <mesh file="dc15_a01_idle_cap_dummy.stl"/>
-    <mesh file="trunk_top__configuration_right.stl"/>
-    <mesh file="foot__configuration_right.stl"/>
-    <mesh file="pelvis__configuration_right.stl"/>
-    <mesh file="battery.stl"/>
-    <mesh file="shoulder.stl"/>
-    <mesh file="hip__configuration_right.stl"/>
-    <mesh file="hip_dbl_block__configuration_left.stl"/>
-    <mesh file="humerus.stl"/>
-    <mesh file="bts2_m2_6x8.stl"/>
-    <mesh file="femur__configuration_right.stl"/>
-    <mesh file="ankle_dbl_block__configuration_right.stl"/>
-    <mesh file="tibia__configuration_right.stl"/>
-    <mesh file="femur__configuration_left.stl"/>
-    <mesh file="head__configuration_right.stl"/>
-    <mesh file="spacer__configuration_right.stl"/>
-    <mesh file="xl330.stl"/>
-    <mesh file="arm_bearing_support__configuration_right.stl"/>
-    <mesh file="dc15_a01_horn_idle2_dummy.stl"/>
-    <mesh file="xl330_without_horn.stl"/>
     <mesh file="hip_dbl_block__configuration_right.stl"/>
+    <mesh file="ankle_dbl_block__configuration_right.stl"/>
+    <mesh file="arm_bearing_support__configuration_right.stl"/>
+    <mesh file="dc15_a01_idle_cap_dummy.stl"/>
+    <mesh file="head__configuration_right.stl"/>
+    <mesh file="shoulder.stl"/>
+    <mesh file="xl330_without_horn.stl"/>
+    <mesh file="humerus.stl"/>
+    <mesh file="pelvis__configuration_right.stl"/>
+    <mesh file="dc15_a01_horn_idle2_dummy.stl"/>
+    <mesh file="spacer__configuration_right.stl"/>
+    <mesh file="battery.stl"/>
+    <mesh file="tibia__configuration_right.stl"/>
+    <mesh file="tibia__configuration_left.stl"/>
+    <mesh file="bts2_m2_6x8.stl"/>
+    <mesh file="radius.stl"/>
+    <mesh file="xl330.stl"/>
+    <mesh file="hip__configuration_right.stl"/>
+    <mesh file="femur__configuration_left.stl"/>
+    <mesh file="femur__configuration_right.stl"/>
+    <mesh file="switch.stl"/>
+    <mesh file="hip_dbl_block__configuration_left.stl"/>
+    <mesh file="chest__configuration_right.stl"/>
+    <mesh file="foot__configuration_right.stl"/>
+    <mesh file="trunk_top__configuration_right.stl"/>
     <material name="arm_bearing_support__configuration_right_material" rgba="0.501961 0.501961 0.501961 1"/>
     <material name="xl330_without_horn_material" rgba="0.301961 0.301961 0.301961 1"/>
     <material name="pelvis__configuration_right_material" rgba="0.501961 0.501961 0.501961 1"/>
