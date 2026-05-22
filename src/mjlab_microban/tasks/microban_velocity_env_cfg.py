@@ -80,8 +80,8 @@ SIM_CFG = SimulationCfg(
         ls_iterations=20,
         ccd_iterations=100,
     ),
-    nconmax=256,
-    njmax=1024,
+    # nconmax=256,
+    # njmax=1024,
 )
 
 def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
@@ -263,12 +263,6 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         params={"sensor_name": self_collision_sensor_cfg.name},
     )
 
-    del cfg.rewards["track_linear_velocity"]
-    del cfg.rewards["track_angular_velocity"]
-    del cfg.rewards["pose"]
-    del cfg.rewards["upright"]
-    del cfg.rewards["body_ang_vel"]
-    del cfg.rewards["angular_momentum"]
     #---------------------------- Commands --------------------------
     command: UniformVelocityCommandCfg = cfg.commands["twist"]
     command.rel_standing_envs = 0.1
@@ -328,7 +322,16 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "reward_term_name": "track_linear_velocity",
             "stages": [
                 {
-                    "name": "command velocity increase",
+                    "name": "command velocity increase 1",
+                    "threshold": 1.5,
+                    "apply": lambda env: set_command_velocity(
+                        env,
+                        lin_vel_x=(-0.5, 0.75),
+                        ang_vel_z=(-1.15, 1.15),
+                    ),
+                },
+                {
+                    "name": "command velocity increase 2",
                     "threshold": 1.5,
                     "apply": lambda env: set_command_velocity(
                         env,
