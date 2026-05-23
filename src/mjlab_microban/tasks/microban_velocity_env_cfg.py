@@ -56,6 +56,7 @@ from mjlab_microban.tasks.mdp import (
     set_command_velocity, 
     no_stepping_penalty, 
     penalize_stepping_while_standing,
+    UniformVelocityCommandWithRotation,
 )
 
 SCENE_CFG = SceneCfg(
@@ -258,7 +259,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     # cfg.rewards["soft_landing"].weight = 0.0
 
     cfg.rewards["foot_slip"].params["command_threshold"] = walking_threshold
-    cfg.rewards["foot_slip"].weight = -0.1
+    cfg.rewards["foot_slip"].weight = -1.0
 
     cfg.rewards["action_rate_l2"].weight = -0.1
 
@@ -269,12 +270,15 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     )
 
     #---------------------------- Commands --------------------------
-    command: UniformVelocityCommandCfg = cfg.commands["twist"]
+    command = cfg.commands["twist"]
     command.rel_standing_envs = 0.1
     command.rel_heading_envs = 0.0
+    command.rel_rotation_envs = 0.1
+    command.rotation_min_ang_vel = 0.3
+    command.build = lambda env, _cmd=command: UniformVelocityCommandWithRotation(_cmd, env)
     command.viz.z_offset = 0.5
 
-    command.ranges.lin_vel_x = (-0.35, 0.5)
+    command.ranges.lin_vel_x = (-0.5, 0.5)
     command.ranges.lin_vel_y = (-0.3, 0.3)
     command.ranges.ang_vel_z = (-0.75, 0.75)
 
@@ -327,19 +331,11 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "reward_term_name": "track_linear_velocity",
             "stages": [
                 {
-                    "name": "command lin_vel increase 1",
+                    "name": "command lin_vel increase",
                     "threshold": 1.5,
                     "apply": lambda env: set_command_velocity(
                         env,
-                        lin_vel_x=(-0.5, 0.75),
-                    ),
-                },
-                {
-                    "name": "command lin_vel increase 2",
-                    "threshold": 1.5,
-                    "apply": lambda env: set_command_velocity(
-                        env,
-                        lin_vel_x=(-0.7, 1.0),
+                        lin_vel_x=(-0.7, 0.7),
                     ),
                 },
             ],
@@ -352,15 +348,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "reward_term_name": "track_angular_velocity",
             "stages": [
                 {
-                    "name": "command ang_vel increase 1",
-                    "threshold": 1.0,
-                    "apply": lambda env: set_command_velocity(
-                        env,
-                        ang_vel_z=(-1.15, 1.15),
-                    ),
-                },
-                {
-                    "name": "command ang_vel increase 2",
+                    "name": "command ang_vel increase",
                     "threshold": 1.0,
                     "apply": lambda env: set_command_velocity(
                         env,
@@ -404,13 +392,11 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         #     "y": (0.0, 0.0),
         # }
 
-        # cfg.commands["twist"].ranges.lin_vel_x = (0.0, 0.0)
+        # cfg.commands["twist"].ranges.lin_vel_x = (0.3, 0.3)
         # cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
-        # cfg.commands["twist"].ranges.ang_vel_z = (0.0, 0.0)
+        # cfg.commands["twist"].ranges.ang_vel_z = (1.5, 1.5)
+        
         # cfg.commands["twist"].rel_standing_envs = 0.0
-
-        # cfg.commands["twist"].ranges.lin_vel_x = (-0.75, 1.0)
-        # cfg.commands["twist"].ranges.ang_vel_z = (-1.0, 1.0)
 
         # Can be used to edit neutral pose with a zero agent
         # cfg.events["reset_base"].params["pose_range"]["x"] = (0.0, 0.0)
