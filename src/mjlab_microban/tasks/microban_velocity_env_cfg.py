@@ -1,8 +1,15 @@
+# Copyright 2026 Marc Duclusaud
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at:
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
 """Microban velocity environment"""
 
 import numpy as np
 from copy import deepcopy
-from dataclasses import dataclass
 
 from mjlab.envs import ManagerBasedRlEnvCfg
 from mjlab.envs.mdp.actions import JointPositionActionCfg
@@ -15,7 +22,6 @@ from mjlab.rl import (
     RslRlPpoAlgorithmCfg,
 )
 from mjlab.utils.noise import UniformNoiseCfg as Unoise
-from mjlab.tasks.velocity.mdp import UniformVelocityCommandCfg
 
 from mjlab.managers.event_manager import EventTermCfg
 from mjlab.managers.reward_manager import RewardTermCfg
@@ -392,11 +398,12 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         #     "y": (0.0, 0.0),
         # }
 
-        # cfg.commands["twist"].ranges.lin_vel_x = (0.3, 0.3)
-        # cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
-        # cfg.commands["twist"].ranges.ang_vel_z = (1.5, 1.5)
+        cfg.commands["twist"].ranges.lin_vel_x = (0.0, 0.0)
+        cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
+        cfg.commands["twist"].ranges.ang_vel_z = (1.0, 1.0)
         
-        # cfg.commands["twist"].rel_standing_envs = 0.0
+        cfg.commands["twist"].rel_standing_envs = 0.0
+        cfg.commands["twist"].rel_rotation_envs = 0.0
 
         # Can be used to edit neutral pose with a zero agent
         # cfg.events["reset_base"].params["pose_range"]["x"] = (0.0, 0.0)

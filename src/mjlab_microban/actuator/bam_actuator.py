@@ -1,3 +1,11 @@
+# Copyright 2026 Marc Duclusaud
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at:
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
 """BAM actuator models for MuJoCo Warp.
 
 Implements BAM (Better Actuator Model) friction models inside mjlab's actuator
