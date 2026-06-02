@@ -393,17 +393,17 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     if play:
         cfg.curriculum = {}
 
+        cfg.commands["twist"].rel_standing_envs = 0.0
+        cfg.commands["twist"].rel_rotation_envs = 0.0
+
         # cfg.events["push_robot"].params["velocity_range"] = {
         #     "x": (0.0, 0.0),
         #     "y": (0.0, 0.0),
         # }
 
-        cfg.commands["twist"].ranges.lin_vel_x = (0.0, 0.0)
-        cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
-        cfg.commands["twist"].ranges.ang_vel_z = (1.0, 1.0)
-        
-        cfg.commands["twist"].rel_standing_envs = 0.0
-        cfg.commands["twist"].rel_rotation_envs = 0.0
+        # cfg.commands["twist"].ranges.lin_vel_x = (0.0, 0.0)
+        # cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
+        # cfg.commands["twist"].ranges.ang_vel_z = (1.0, 1.0)
 
         # Can be used to edit neutral pose with a zero agent
         # cfg.events["reset_base"].params["pose_range"]["x"] = (0.0, 0.0)
@@ -415,12 +415,31 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
         cfg.observations["actor"].enable_corruption = False
 
-        # Can be used to print something every step
-        def debug(env: ManagerBasedRlEnv, _): ...
+        # cfg.terminations = {}
 
-        cfg.events["debug"] = EventTermCfg(
-            func=debug, mode="interval", interval_range_s=(0.0, 0.0)
-        )
+        # Can be used to print something every step
+        def debug(env: ManagerBasedRlEnv, _):
+            env.observation_manager.compute_group("actor", update_history=True)
+
+            terms = dict(env.observation_manager.get_active_iterable_terms(env_idx=0))
+
+            base_ang_vel = terms["actor-base_ang_vel"]
+            projected_gravity = terms["actor-projected_gravity"]
+
+            print("\n")
+            print(f"base_ang_vel: ")
+            print(f"x: {base_ang_vel[0]:.3f}")
+            print(f"y: {base_ang_vel[1]:.3f}")
+            print(f"z: {base_ang_vel[2]:.3f}")
+            print("\n")
+            print(f"projected_gravity: ")
+            print(f"x: {projected_gravity[0]:.3f}")
+            print(f"y: {projected_gravity[1]:.3f}")
+            print(f"z: {projected_gravity[2]:.3f}")
+
+        # cfg.events["debug"] = EventTermCfg(
+        #     func=debug, mode="interval", interval_range_s=(0.0, 0.0)
+        # )
 
     return cfg
 
