@@ -57,7 +57,7 @@ FULL_COLLISION = CollisionCfg(
 from bam.mjlab import make_bam_actuator_cfg
 
 actuators = make_bam_actuator_cfg(
-    json_path="/home/marc/bam/params/xl330/m6.json",
+    json_path="../bam/params/xl330/m6.json",
     kp_fw=125,
     vin=8.0,
     target_names_expr=(r".*",),
