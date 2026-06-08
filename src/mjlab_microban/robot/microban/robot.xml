@@ -27,8 +27,8 @@ http://www.apache.org/licenses/LICENSE-2.0
   <!-- Additional additional.xml -->
   <default>
     <default class="xml330_actuator">
-      <joint damping="0.044" frictionloss="0.013" armature="0.0017"/>
-      <position kp="0.43" kv="0.0" forcerange="-0.75 0.75"/>
+        <joint damping="0.041" frictionloss="0.013" armature="0.0018"/>
+        <position kp="0.277" kv="0.0" forcerange="-0.77 0.77"/>
     </default>
   </default>
   <sensor>
