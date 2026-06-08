@@ -15,8 +15,6 @@ from mjlab.actuator import XmlActuatorCfg
 from mjlab.entity import EntityArticulationInfoCfg, EntityCfg
 from mjlab.utils.spec_config import CollisionCfg
 
-from mjlab_microban.actuator.bam_params import make_bam_m6_actuator_cfg, make_bam_m4_actuator_cfg
-
 MICROBAN_XML: Path = Path(os.path.dirname(__file__)) / "microban" / "robot.xml"
 assert MICROBAN_XML.exists(), f"XML not found: {MICROBAN_XML}"
 
@@ -56,22 +54,23 @@ FULL_COLLISION = CollisionCfg(
     friction={r"^(left|right)_foot_collision$": (1.0,)},
 )
 
-# -- Old actuator (XML position, MuJoCo built-in PD + friction) --
-actuators = XmlActuatorCfg(
+from bam.mjlab import make_bam_actuator_cfg
+
+actuators = make_bam_actuator_cfg(
+    json_path="/home/marc/bam/params/xl330/m6.json",
+    kp_fw=125,
+    vin=8.0,
     target_names_expr=(r".*",),
     delay_min_lag=0,
     delay_max_lag=3,
 )
 
-# -- BAM M6 actuator (full voltage control + load-dependent friction) --
-# actuators = make_bam_m6_actuator_cfg()
-# actuators.delay_min_lag = 0
-# actuators.delay_max_lag = 3
-
-# -- BAM M4 actuator
-# actuators = make_bam_m4_actuator_cfg()
-# actuators.delay_min_lag = 0
-# actuators.delay_max_lag = 3
+# -- Old actuator (XML position, MuJoCo built-in PD + friction) --
+# actuators = XmlActuatorCfg(
+#     target_names_expr=(r".*",),
+#     delay_min_lag=0,
+#     delay_max_lag=3,
+# )
 
 MICROBAN_ROBOT_CFG = EntityCfg(
     spec_fn=get_spec,
