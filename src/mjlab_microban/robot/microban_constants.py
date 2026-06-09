@@ -65,7 +65,7 @@ actuators = make_bam_actuator_cfg(
     delay_max_lag=14,
 )
 
-# -- Old actuator (XML position, MuJoCo built-in PD + friction) --
+# -- Old actuator (XML position, MuJoCo default) --
 # actuators = XmlActuatorCfg(
 #     target_names_expr=(r".*",),
 #     delay_min_lag=0,

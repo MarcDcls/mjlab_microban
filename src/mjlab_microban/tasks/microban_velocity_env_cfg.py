@@ -175,13 +175,13 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         noise=Unoise(n_min=-0.25, n_max=0.25),
     )
 
-    # Observation delays to simulate IMU latency
-    cfg.observations["actor"].terms["projected_gravity"] = deepcopy(
-        cfg.observations["actor"].terms["projected_gravity"]
-    )
-    cfg.observations["actor"].terms["base_ang_vel"] = deepcopy(
-        cfg.observations["actor"].terms["base_ang_vel"]
-    )
+    # Observation delays/noises to simulate IMU sensor readings (only for actor, not critic)
+    cfg.observations["actor"].terms["projected_gravity"] = deepcopy(cfg.observations["actor"].terms["projected_gravity"])
+    cfg.observations["actor"].terms["projected_gravity"].noise = Unoise(n_min=-0.005, n_max=0.005)
+
+    cfg.observations["actor"].terms["base_ang_vel"] = deepcopy(cfg.observations["actor"].terms["base_ang_vel"])
+    cfg.observations["actor"].terms["base_ang_vel"].noise = Unoise(n_min=-0.03, n_max=0.03)
+
     # cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 0
     # cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 1
     # cfg.observations["actor"].terms["base_ang_vel"].delay_update_period = 64
@@ -193,8 +193,9 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 4
     cfg.observations["actor"].terms["base_ang_vel"].delay_update_period = 64
     cfg.observations["actor"].terms["projected_gravity"].delay_min_lag = 3
-    cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 5
+    cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 4
     cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
+
     #---------------------------- Rewards ---------------------------
     cfg.rewards["track_linear_velocity"].params["std"] = np.sqrt(0.1)
     cfg.rewards["track_linear_velocity"].weight = 2.0
