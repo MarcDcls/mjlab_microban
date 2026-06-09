@@ -485,5 +485,5 @@ MicrobanVelocityRlCfg = RslRlOnPolicyRunnerCfg(
     experiment_name="mjlab_microban_velocity",
     save_interval=500,
     num_steps_per_env=24,
-    max_iterations=20_000,
+    max_iterations=30_000,
 )
