@@ -61,8 +61,8 @@ actuators = make_bam_actuator_cfg(
     kp_fw=125,
     vin=8.0,
     target_names_expr=(r".*",),
-    delay_min_lag=0,
-    delay_max_lag=3,
+    delay_min_lag=10,
+    delay_max_lag=14,
 )
 
 # -- Old actuator (XML position, MuJoCo built-in PD + friction) --
