@@ -61,8 +61,8 @@ actuators = make_bam_actuator_cfg(
     kp_fw=125,
     vin=8.0,
     target_names_expr=(r".*",),
-    delay_min_lag=10,
-    delay_max_lag=14,
+    delay_min_lag=6,
+    delay_max_lag=10,
 )
 
 # -- Old actuator (XML position, MuJoCo default) --
