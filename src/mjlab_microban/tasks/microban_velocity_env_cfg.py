@@ -58,6 +58,7 @@ from mjlab.envs.mdp.actions import JointPositionActionCfg
 from mjlab.sensor import ContactMatch, ContactSensorCfg, ObjRef, TerrainHeightSensorCfg, RingPatternCfg
 
 from mjlab_microban.tasks.mdp import (
+    reward_based_staged_curriculum,
     reward_based_curriculum, 
     set_command_velocity, 
     no_stepping_penalty, 
@@ -189,11 +190,11 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     # cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 1
     # cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
-    cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 2
-    cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 3
+    cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 3
+    cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 4
     cfg.observations["actor"].terms["base_ang_vel"].delay_update_period = 64
     cfg.observations["actor"].terms["projected_gravity"].delay_min_lag = 3
-    cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 3
+    cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 4
     cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
     #---------------------------- Rewards ---------------------------
@@ -256,7 +257,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.rewards["air_time"].params["command_threshold"] = walking_threshold
     cfg.rewards["air_time"].params["threshold_min"] = 0.10
     cfg.rewards["air_time"].params["threshold_max"] = 0.25
-    cfg.rewards["air_time"].weight = 2.0
+    cfg.rewards["air_time"].weight = 3.0
 
     cfg.rewards["no_stepping"] = RewardTermCfg(
         func=no_stepping_penalty,
@@ -338,57 +339,94 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     #---------------------------- Curriculum ------------------------
     cfg.curriculum = {}
 
-    cfg.curriculum["track_linear_velocity_reward"] = CurriculumTermCfg(
-        func=reward_based_curriculum,
+    cfg.curriculum["staged_curriculum"] = CurriculumTermCfg(
+        func=reward_based_staged_curriculum,
         params={
-            "reward_term_name": "track_linear_velocity",
             "stages": [
                 {
-                    "name": "command lin_vel increase",
-                    "threshold": 1.5,
+                    "name": "learning to step",
+                    "reward_term_name": "air_time",
+                    "threshold": 0.1,
+                    "apply": lambda env: penalize_stepping_while_standing(
+                        env,
+                        air_time_weight=0.01,
+                        no_stepping_penalty_weight=-0.1,
+                    ),
+                },
+                {
+                    "name": "learning to walk forward",
+                    "reward_term_name": "track_linear_velocity",
+                    "threshold": 1.2,
                     "apply": lambda env: set_command_velocity(
                         env,
                         lin_vel_x=(-0.7, 0.7),
                     ),
                 },
-            ],
-        },
-    )
-
-    cfg.curriculum["track_angular_velocity_reward"] = CurriculumTermCfg(
-        func=reward_based_curriculum,
-        params={
-            "reward_term_name": "track_angular_velocity",
-            "stages": [
                 {
-                    "name": "command ang_vel increase",
-                    "threshold": 1.0,
+                    "name": "learning to turn",
+                    "reward_term_name": "track_angular_velocity",
+                    "threshold": 0.8,
                     "apply": lambda env: set_command_velocity(
                         env,
-                        ang_vel_z=(-1.5, 1.5),
+                        ang_vel_z=(-2.0, 2.0),
                     ),
-                },
+                }
             ],
         },
     )
 
-    cfg.curriculum["air_time_reward"] = CurriculumTermCfg(
-        func=reward_based_curriculum,
-        params={
-            "reward_term_name": "air_time",
-            "stages": [
-                {
-                    "name": "penalize stepping while standing",
-                    "threshold": 0.8,
-                    "apply": lambda env: penalize_stepping_while_standing(
-                        env,
-                        air_time_weight=0.1,
-                        no_stepping_penalty_weight=-0.1,
-                    ),
-                },
-            ],
-        },
-    )
+
+    # cfg.curriculum["track_linear_velocity_reward"] = CurriculumTermCfg(
+    #     func=reward_based_curriculum,
+    #     params={
+    #         "reward_term_name": "track_linear_velocity",
+    #         "stages": [
+    #             {
+    #                 "name": "command lin_vel increase",
+    #                 "threshold": 1.5,
+    #                 "apply": lambda env: set_command_velocity(
+    #                     env,
+    #                     lin_vel_x=(-0.7, 0.7),
+    #                 ),
+    #             },
+    #         ],
+    #     },
+    # )
+
+    # cfg.curriculum["track_angular_velocity_reward"] = CurriculumTermCfg(
+    #     func=reward_based_curriculum,
+    #     params={
+    #         "reward_term_name": "track_angular_velocity",
+    #         "stages": [
+    #             {
+    #                 "name": "command ang_vel increase",
+    #                 "threshold": 1.0,
+    #                 "apply": lambda env: set_command_velocity(
+    #                     env,
+    #                     ang_vel_z=(-1.5, 1.5),
+    #                 ),
+    #             },
+    #         ],
+    #     },
+    # )
+
+    # cfg.curriculum["air_time_reward"] = CurriculumTermCfg(
+    #     func=reward_based_curriculum,
+    #     params={
+    #         "reward_term_name": "air_time",
+    #         "stages": [
+    #             {
+    #                 "name": "penalize stepping while standing",
+    #                 "threshold": 1.2,
+    #                 "apply": lambda env: penalize_stepping_while_standing(
+    #                     env,
+    #                     air_time_weight=0.1,
+    #                     no_stepping_penalty_weight=-0.1,
+    #                 ),
+    #             },
+    #         ],
+    #     },
+    # )
 
     #---------------------------- Terminations ----------------------
     cfg.terminations["fell_over"] = TerminationTermCfg(
