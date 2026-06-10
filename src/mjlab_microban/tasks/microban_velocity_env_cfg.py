@@ -356,7 +356,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                 {
                     "name": "learning to walk forward",
                     "reward_term_name": "track_linear_velocity",
-                    "threshold": 1.2,
+                    "threshold": 0.9,
                     "apply": lambda env: set_command_velocity(
                         env,
                         lin_vel_x=(-0.7, 0.7),
@@ -365,7 +365,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                 {
                     "name": "learning to turn",
                     "reward_term_name": "track_angular_velocity",
-                    "threshold": 0.8,
+                    "threshold": 0.5,
                     "apply": lambda env: set_command_velocity(
                         env,
                         ang_vel_z=(-2.0, 2.0),
