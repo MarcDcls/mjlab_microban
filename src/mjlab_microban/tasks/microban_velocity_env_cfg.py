@@ -300,8 +300,8 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.events["reset_base"].params["pose_range"]["z"] = (0.0, 0.01)
 
     cfg.events["push_robot"].params["velocity_range"] = {
-        "x": (-0.5, 0.5),
-        "y": (-0.5, 0.5),
+        "x": (-0.35, 0.35),
+        "y": (-0.35, 0.35),
     }
 
     cfg.events["foot_friction"].params["asset_cfg"].geom_names = (
