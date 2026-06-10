@@ -349,7 +349,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                     "threshold": 1.0,
                     "apply": lambda env: penalize_stepping_while_standing(
                         env,
-                        air_time_weight=0.1,
+                        air_time_weight=1.0,
                         no_stepping_penalty_weight=-0.1,
                     ),
                 },
