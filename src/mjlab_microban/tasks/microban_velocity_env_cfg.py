@@ -287,7 +287,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     command = cfg.commands["twist"]
     command.rel_standing_envs = 0.1
     command.rel_heading_envs = 0.0
-    command.rel_rotation_envs = 0.1
+    command.rel_rotation_envs = 0.2
     command.rotation_min_ang_vel = 0.3
     command.build = lambda env, _cmd=command: UniformVelocityCommandWithRotation(_cmd, env)
     command.viz.z_offset = 0.5
@@ -300,8 +300,8 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.events["reset_base"].params["pose_range"]["z"] = (0.0, 0.01)
 
     cfg.events["push_robot"].params["velocity_range"] = {
-        "x": (-0.35, 0.35),
-        "y": (-0.35, 0.35),
+        "x": (-0.5, 0.5),
+        "y": (-0.5, 0.5),
     }
 
     cfg.events["foot_friction"].params["asset_cfg"].geom_names = (
@@ -356,7 +356,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                 {
                     "name": "learning to walk forward",
                     "reward_term_name": "track_linear_velocity",
-                    "threshold": 0.9,
+                    "threshold": 1.0,
                     "apply": lambda env: set_command_velocity(
                         env,
                         lin_vel_x=(-0.7, 0.7),
@@ -365,7 +365,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                 {
                     "name": "learning to turn",
                     "reward_term_name": "track_angular_velocity",
-                    "threshold": 0.5,
+                    "threshold": 0.7,
                     "apply": lambda env: set_command_velocity(
                         env,
                         ang_vel_z=(-2.0, 2.0),
