@@ -346,10 +346,10 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                 {
                     "name": "learning to step",
                     "reward_term_name": "air_time",
-                    "threshold": 0.1,
+                    "threshold": 1.0,
                     "apply": lambda env: penalize_stepping_while_standing(
                         env,
-                        air_time_weight=0.01,
+                        air_time_weight=0.1,
                         no_stepping_penalty_weight=-0.1,
                     ),
                 },
