@@ -190,8 +190,8 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     # cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 1
     # cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
-    cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 3
-    cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 4
+    cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 2
+    cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 3
     cfg.observations["actor"].terms["base_ang_vel"].delay_update_period = 64
     cfg.observations["actor"].terms["projected_gravity"].delay_min_lag = 3
     cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 4
@@ -255,8 +255,8 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.rewards["foot_swing_height"].params["target_height"] = 0.02
 
     cfg.rewards["air_time"].params["command_threshold"] = walking_threshold
-    cfg.rewards["air_time"].params["threshold_min"] = 0.10
-    cfg.rewards["air_time"].params["threshold_max"] = 0.25
+    cfg.rewards["air_time"].params["threshold_min"] = 0.125
+    cfg.rewards["air_time"].params["threshold_max"] = 0.300
     cfg.rewards["air_time"].weight = 3.0
 
     cfg.rewards["no_stepping"] = RewardTermCfg(
@@ -287,7 +287,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     command = cfg.commands["twist"]
     command.rel_standing_envs = 0.1
     command.rel_heading_envs = 0.0
-    command.rel_rotation_envs = 0.2
+    command.rel_rotation_envs = 0.1
     command.rotation_min_ang_vel = 0.3
     command.build = lambda env, _cmd=command: UniformVelocityCommandWithRotation(_cmd, env)
     command.viz.z_offset = 0.5
