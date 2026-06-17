@@ -345,7 +345,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "stages": [
                 {
                     "name": "learning to step",
-                    "reward_term_name": "air_time",
+                    "reward_term_name": "track_angular_velocity",
                     "threshold": 1.0,
                     "apply": lambda env: penalize_stepping_while_standing(
                         env,
@@ -359,7 +359,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                     "threshold": 1.0,
                     "apply": lambda env: (
                         set_command_velocity(env, lin_vel_x=(-0.7, 0.7)),
-                        setattr(env.command_manager.get_term_cfg("twist"), "rel_rotation_envs", 0.3),
+                        # setattr(env.command_manager.get_term_cfg("twist"), "rel_rotation_envs", 0.3),
                     ),
                 },
                 {
@@ -439,7 +439,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         cfg.curriculum = {}
 
         cfg.commands["twist"].rel_standing_envs = 0.0
-        cfg.commands["twist"].rel_rotation_envs = 0.0
+        cfg.commands["twist"].rel_rotation_envs = 1.0
 
         # cfg.events["push_robot"].params["velocity_range"] = {
         #     "x": (0.0, 0.0),
