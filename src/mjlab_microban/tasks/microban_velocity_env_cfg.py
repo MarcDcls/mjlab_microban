@@ -15,6 +15,7 @@ from mjlab.envs import ManagerBasedRlEnvCfg
 from mjlab.envs.mdp.actions import JointPositionActionCfg
 from mjlab.managers.scene_entity_config import SceneEntityCfg
 from mjlab.sensor import ContactMatch, ContactSensorCfg
+
 from mjlab_microban.robot.microban_constants import MICROBAN_ROBOT_CFG
 from mjlab.rl import (
     RslRlModelCfg,
@@ -63,6 +64,7 @@ from mjlab_microban.tasks.mdp import (
     set_command_velocity, 
     no_stepping_penalty, 
     penalize_stepping_while_standing,
+    penalize_stepping_curriculum,
     UniformVelocityCommandWithRotation,
 )
 
@@ -294,7 +296,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     command.ranges.lin_vel_x = (-0.5, 0.5)
     command.ranges.lin_vel_y = (-0.3, 0.3)
-    command.ranges.ang_vel_z = (-0.75, 0.75)
+    command.ranges.ang_vel_z = (-1.0, 1.0)
 
     #---------------------------- Events ----------------------------
     cfg.events["reset_base"].params["pose_range"]["z"] = (0.0, 0.01)
@@ -339,42 +341,69 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     #---------------------------- Curriculum ------------------------
     cfg.curriculum = {}
 
-    cfg.curriculum["staged_curriculum"] = CurriculumTermCfg(
-        func=reward_based_staged_curriculum,
+    cfg.curriculum["commands_vel"] = CurriculumTermCfg(
+        func=mdp.commands_vel,
         params={
-            "stages": [
+            "command_name": "twist",
+            "velocity_stages": [
                 {
-                    "name": "learning to step",
-                    "reward_term_name": "track_angular_velocity",
-                    "threshold": 1.0,
-                    "apply": lambda env: penalize_stepping_while_standing(
-                        env,
-                        air_time_weight=1.0,
-                        no_stepping_penalty_weight=-0.1,
-                    ),
+                    "step": 0, 
+                    "lin_vel_x": (-0.5, 0.5), 
+                    "ang_vel_z": (-1.0, 1.0),
                 },
                 {
-                    "name": "learning to walk forward",
-                    "reward_term_name": "track_linear_velocity",
-                    "threshold": 1.0,
-                    "apply": lambda env: (
-                        set_command_velocity(env, lin_vel_x=(-0.7, 0.7)),
-                        # setattr(env.command_manager.get_term_cfg("twist"), "rel_rotation_envs", 0.3),
-                    ),
+                    "step": 300 * 24, 
+                    "lin_vel_x": (-0.7, 0.7), 
+                    "ang_vel_z": (-2.0, 2.0),
                 },
-                {
-                    "name": "learning to turn",
-                    "reward_term_name": "track_angular_velocity",
-                    "threshold": 0.7,
-                    "apply": lambda env: set_command_velocity(
-                        env, 
-                        ang_vel_z=(-2.0, 2.0),
-                    ),
-                }
             ],
         },
     )
 
+    cfg.curriculum["penalize_stepping"] = CurriculumTermCfg(
+        func=penalize_stepping_curriculum,
+        params={
+            "air_time_weight": 1.0,
+            "no_stepping_penalty_weight": -0.1,
+            "step": 300 * 24,
+        },
+    )
+
+    # cfg.curriculum["staged_curriculum"] = CurriculumTermCfg(
+    #     func=reward_based_staged_curriculum,
+    #     params={
+    #         "stages": [
+    #             {
+    #                 "name": "learning to step",
+    #                 "reward_term_name": "track_angular_velocity",
+    #                 "threshold": 1.0,
+    #                 "apply": lambda env: penalize_stepping_while_standing(
+    #                     env,
+    #                     air_time_weight=1.0,
+    #                     no_stepping_penalty_weight=-0.1,
+    #                 ),
+    #             },
+    #             {
+    #                 "name": "learning to walk forward",
+    #                 "reward_term_name": "track_linear_velocity",
+    #                 "threshold": 1.0,
+    #                 "apply": lambda env: (
+    #                     set_command_velocity(env, lin_vel_x=(-0.7, 0.7)),
+    #                     # setattr(env.command_manager.get_term_cfg("twist"), "rel_rotation_envs", 0.3),
+    #                 ),
+    #             },
+    #             {
+    #                 "name": "learning to turn",
+    #                 "reward_term_name": "track_angular_velocity",
+    #                 "threshold": 0.7,
+    #                 "apply": lambda env: set_command_velocity(
+    #                     env, 
+    #                     ang_vel_z=(-2.0, 2.0),
+    #                 ),
+    #             }
+    #         ],
+    #     },
+    # )
 
     # cfg.curriculum["track_linear_velocity_reward"] = CurriculumTermCfg(
     #     func=reward_based_curriculum,
@@ -439,16 +468,16 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         cfg.curriculum = {}
 
         cfg.commands["twist"].rel_standing_envs = 0.0
-        cfg.commands["twist"].rel_rotation_envs = 1.0
+        cfg.commands["twist"].rel_rotation_envs = 0.0
 
-        # cfg.events["push_robot"].params["velocity_range"] = {
-        #     "x": (0.0, 0.0),
-        #     "y": (0.0, 0.0),
-        # }
+        cfg.events["push_robot"].params["velocity_range"] = {
+            "x": (0.0, 0.0),
+            "y": (0.0, 0.0),
+        }
 
-        # cfg.commands["twist"].ranges.lin_vel_x = (0.0, 0.0)
-        # cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
-        # cfg.commands["twist"].ranges.ang_vel_z = (1.0, 1.0)
+        cfg.commands["twist"].ranges.lin_vel_x = (-0.7, 0.7)
+        cfg.commands["twist"].ranges.lin_vel_y = (0.3, 0.3)
+        cfg.commands["twist"].ranges.ang_vel_z = (-2.0, 2.0)
 
         # Can be used to edit neutral pose with a zero agent
         # cfg.events["reset_base"].params["pose_range"]["x"] = (0.0, 0.0)

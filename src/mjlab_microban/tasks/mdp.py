@@ -150,6 +150,27 @@ def penalize_stepping_while_standing(
     env.reward_manager.get_term_cfg("air_time").weight = air_time_weight
     env.reward_manager.get_term_cfg("no_stepping").weight = no_stepping_penalty_weight
 
+def penalize_stepping_curriculum(
+    env: ManagerBasedRlEnv,
+    env_ids: torch.Tensor,
+    air_time_weight: float,
+    no_stepping_penalty_weight: float,
+    step: int = 10000 * 24,
+) -> dict[str, torch.Tensor]:
+    """
+    Updating the air_time and no_stepping reward weights to penalize stepping while standing
+    after a certain number of iterations.
+    """
+    del env_ids  # Unused.
+
+    if env.common_step_counter >= step: 
+        env.reward_manager.get_term_cfg("air_time").weight = air_time_weight
+        env.reward_manager.get_term_cfg("no_stepping").weight = no_stepping_penalty_weight
+
+    return {
+        "air_time_weight": torch.tensor(env.reward_manager.get_term_cfg("air_time").weight),
+        "no_stepping_penalty_weight": torch.tensor(env.reward_manager.get_term_cfg("no_stepping").weight),
+    }
 
 class UniformVelocityCommandWithRotation(UniformVelocityCommand):
     """Extends UniformVelocityCommand with a `rel_rotation_envs` fraction.
