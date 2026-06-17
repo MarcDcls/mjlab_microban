@@ -352,9 +352,14 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                     "ang_vel_z": (-1.0, 1.0),
                 },
                 {
-                    "step": 300 * 24, 
+                    "step": 5000 * 24, 
                     "lin_vel_x": (-0.7, 0.7), 
                     "ang_vel_z": (-2.0, 2.0),
+                },
+                {
+                    "step": 20000 * 24, 
+                    "lin_vel_x": (-0.9, 0.9), 
+                    "ang_vel_z": (-3.0, 3.0),
                 },
             ],
         },
@@ -365,7 +370,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         params={
             "air_time_weight": 1.0,
             "no_stepping_penalty_weight": -0.1,
-            "step": 300 * 24,
+            "step": 5000 * 24,
         },
     )
 
