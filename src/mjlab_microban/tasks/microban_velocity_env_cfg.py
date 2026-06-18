@@ -64,7 +64,7 @@ from mjlab_microban.tasks.mdp import (
     set_command_velocity, 
     no_stepping_penalty, 
     penalize_stepping_while_standing,
-    penalize_stepping_curriculum,
+    stepping_curriculum,
     UniformVelocityCommandWithRotation,
 )
 
@@ -366,11 +366,13 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     )
 
     cfg.curriculum["penalize_stepping"] = CurriculumTermCfg(
-        func=penalize_stepping_curriculum,
+        func=stepping_curriculum,
         params={
+            "step": 5000 * 24,
             "air_time_weight": 1.0,
             "no_stepping_penalty_weight": -0.1,
-            "step": 5000 * 24,
+            "rel_standing_envs": 0.2,
+            "rel_rotation_envs": 0.3,
         },
     )
 
@@ -480,9 +482,9 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "y": (0.0, 0.0),
         }
 
-        cfg.commands["twist"].ranges.lin_vel_x = (-0.7, 0.7)
-        cfg.commands["twist"].ranges.lin_vel_y = (0.3, 0.3)
-        cfg.commands["twist"].ranges.ang_vel_z = (-2.0, 2.0)
+        # cfg.commands["twist"].ranges.lin_vel_x = (-0.7, 0.7)
+        # cfg.commands["twist"].ranges.lin_vel_y = (-0.3, 0.3)
+        # cfg.commands["twist"].ranges.ang_vel_z = (-2.0, 2.0)
 
         # Can be used to edit neutral pose with a zero agent
         # cfg.events["reset_base"].params["pose_range"]["x"] = (0.0, 0.0)

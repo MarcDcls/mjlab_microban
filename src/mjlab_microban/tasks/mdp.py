@@ -150,11 +150,13 @@ def penalize_stepping_while_standing(
     env.reward_manager.get_term_cfg("air_time").weight = air_time_weight
     env.reward_manager.get_term_cfg("no_stepping").weight = no_stepping_penalty_weight
 
-def penalize_stepping_curriculum(
+def stepping_curriculum(
     env: ManagerBasedRlEnv,
     env_ids: torch.Tensor,
     air_time_weight: float,
     no_stepping_penalty_weight: float,
+    rel_standing_envs: float = 0.0,
+    rel_rotation_envs: float = 0.0,
     step: int = 10000 * 24,
 ) -> dict[str, torch.Tensor]:
     """
@@ -166,10 +168,14 @@ def penalize_stepping_curriculum(
     if env.common_step_counter >= step: 
         env.reward_manager.get_term_cfg("air_time").weight = air_time_weight
         env.reward_manager.get_term_cfg("no_stepping").weight = no_stepping_penalty_weight
+        env.command_manager.get_term_cfg("twist").rel_standing_envs = rel_standing_envs
+        env.command_manager.get_term_cfg("twist").rel_rotation_envs = rel_rotation_envs
 
     return {
         "air_time_weight": torch.tensor(env.reward_manager.get_term_cfg("air_time").weight),
         "no_stepping_penalty_weight": torch.tensor(env.reward_manager.get_term_cfg("no_stepping").weight),
+        "rel_standing_envs": torch.tensor(env.command_manager.get_term_cfg("twist").rel_standing_envs),
+        "rel_rotation_envs": torch.tensor(env.command_manager.get_term_cfg("twist").rel_rotation_envs),
     }
 
 class UniformVelocityCommandWithRotation(UniformVelocityCommand):
