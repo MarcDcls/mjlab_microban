@@ -364,9 +364,9 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                         ),
                         set_stepping_parameters(
                             env,
-                            air_time_weight=1.0,
-                            no_stepping_penalty_weight=-0.1,
-                            rel_standing_envs=0.1,
+                            air_time_weight=3.0,
+                            no_stepping_penalty_weight=-1.0,
+                            rel_standing_envs=0.2,
                             rel_rotation_envs=0.3,
                         ),
                     },
