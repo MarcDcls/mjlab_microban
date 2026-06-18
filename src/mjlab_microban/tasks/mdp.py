@@ -255,7 +255,6 @@ def set_command_velocity(
 ) -> None:
     """
     Helper function to set the command velocity parameters in the environment.
-    Returns a dict of the current (post-update) ranges for wandb logging.
     """
     cmd = env.command_manager.get_term_cfg("twist")
     if lin_vel_x is not None:
@@ -276,7 +275,6 @@ def set_stepping_parameters(
 ) -> None:
     """
     Helper function to set stepping/standing curriculum parameters.
-    Returns a dict of the current (post-update) values for wandb logging.
     """
     if air_time_weight is not None:
         env.reward_manager.get_term_cfg("air_time").weight = air_time_weight
@@ -286,6 +284,21 @@ def set_stepping_parameters(
         env.command_manager.get_term_cfg("twist").rel_standing_envs = rel_standing_envs
     if rel_rotation_envs is not None:
         env.command_manager.get_term_cfg("twist").rel_rotation_envs = rel_rotation_envs
+
+def set_push_parameters(
+    env,
+    velocity_range: dict[str, tuple[float, float]] | None = None,
+    interval_range: tuple[float, float] | None = None,
+) -> None:
+    """
+    Helper function to set push event parameters.
+    Returns a dict of the current (post-update) values for wandb logging.
+    """
+    push_event_cfg = env.event_manager.get_term_cfg("push_robot")
+    if velocity_range is not None:
+        push_event_cfg.params["velocity_range"] = velocity_range
+    if interval_range is not None:
+        push_event_cfg.params["interval_range"] = interval_range
 
 def penalize_stepping_while_standing(
     env: ManagerBasedRlEnv,

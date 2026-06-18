@@ -64,6 +64,7 @@ from mjlab_microban.tasks.mdp import (
     step_based_staged_curriculum,
     set_command_velocity,
     set_stepping_parameters,
+    set_push_parameters,
     no_stepping_penalty, 
     penalize_stepping_while_standing,
     stepping_curriculum,
@@ -261,7 +262,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.rewards["air_time"].params["command_threshold"] = walking_threshold
     cfg.rewards["air_time"].params["threshold_min"] = 0.125
     cfg.rewards["air_time"].params["threshold_max"] = 0.300
-    cfg.rewards["air_time"].weight = 2.0
+    cfg.rewards["air_time"].weight = 1.0
 
     cfg.rewards["no_stepping"] = RewardTermCfg(
         func=no_stepping_penalty,
@@ -307,10 +308,10 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.events["reset_base"].params["pose_range"]["z"] = (0.0, 0.01)
 
     cfg.events["push_robot"].params["velocity_range"] = {
-        "x": (-0.35, 0.35),
-        "y": (-0.35, 0.35),
-        # "x": (-0.5, 0.5),
-        # "y": (-0.5, 0.5),
+        # "x": (-0.35, 0.35),
+        # "y": (-0.35, 0.35),
+        "x": (-0.5, 0.5),
+        "y": (-0.5, 0.5),
     }
 
     cfg.events["foot_friction"].params["asset_cfg"].geom_names = (
@@ -364,10 +365,17 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                         ),
                         set_stepping_parameters(
                             env,
-                            air_time_weight=2.0,
+                            air_time_weight=1.0,
                             no_stepping_penalty_weight=-1.0,
                             rel_standing_envs=0.2,
                             rel_rotation_envs=0.3,
+                        ),
+                        set_push_parameters(
+                            env,
+                            velocity_range={
+                                "x": (-0.35, 0.35),
+                                "y": (-0.35, 0.35),
+                            },
                         ),
                     },
                 },
