@@ -60,8 +60,10 @@ from mjlab.sensor import ContactMatch, ContactSensorCfg, ObjRef, TerrainHeightSe
 
 from mjlab_microban.tasks.mdp import (
     reward_based_staged_curriculum,
-    reward_based_curriculum, 
-    set_command_velocity, 
+    reward_based_curriculum,
+    step_based_staged_curriculum,
+    set_command_velocity,
+    set_stepping_parameters,
     no_stepping_penalty, 
     penalize_stepping_while_standing,
     stepping_curriculum,
@@ -287,16 +289,19 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     #---------------------------- Commands --------------------------
     command = cfg.commands["twist"]
+    command.build = lambda env, _cmd=command: UniformVelocityCommandWithRotation(_cmd, env)
+    command.viz.z_offset = 0.5
+    
     command.rel_standing_envs = 0.1
     command.rel_heading_envs = 0.0
     command.rel_rotation_envs = 0.1
-    command.rotation_min_ang_vel = 0.3
-    command.build = lambda env, _cmd=command: UniformVelocityCommandWithRotation(_cmd, env)
-    command.viz.z_offset = 0.5
 
     command.ranges.lin_vel_x = (-0.5, 0.5)
     command.ranges.lin_vel_y = (-0.3, 0.3)
-    command.ranges.ang_vel_z = (-1.0, 1.0)
+    command.ranges.ang_vel_z = (-0.75, 0.75)
+
+    command.rotation_env_ang_vel_range = (-1.5, 1.5)
+    command.rotation_min_ang_vel = 0.5
 
     #---------------------------- Events ----------------------------
     cfg.events["reset_base"].params["pose_range"]["z"] = (0.0, 0.01)
@@ -341,38 +346,40 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     #---------------------------- Curriculum ------------------------
     cfg.curriculum = {}
 
-    cfg.curriculum["commands_vel"] = CurriculumTermCfg(
-        func=mdp.commands_vel,
+    cfg.curriculum["staged_curriculum"] = CurriculumTermCfg(
+        func=step_based_staged_curriculum,
         params={
-            "command_name": "twist",
-            "velocity_stages": [
+            "stages": [
                 {
-                    "step": 0, 
-                    "lin_vel_x": (-0.5, 0.5), 
-                    "ang_vel_z": (-1.0, 1.0),
+                    "name": "penalize stepping + increase velocity",
+                    "step": 5000 * 24,
+                    "apply": lambda env: {
+                        set_command_velocity(
+                            env,
+                            lin_vel_x=(-0.7, 0.7),
+                            ang_vel_z=(-1.5, 1.5),
+                            rotation_env_ang_vel_z=(-3.0, 3.0),
+                        ),
+                        set_stepping_parameters(
+                            env,
+                            air_time_weight=1.0,
+                            no_stepping_penalty_weight=-0.1,
+                            rel_standing_envs=0.2,
+                            rel_rotation_envs=0.3,
+                        ),
+                    },
                 },
-                {
-                    "step": 5000 * 24, 
-                    "lin_vel_x": (-0.7, 0.7), 
-                    "ang_vel_z": (-2.0, 2.0),
-                },
-                {
-                    "step": 20000 * 24, 
-                    "lin_vel_x": (-0.9, 0.9), 
-                    "ang_vel_z": (-3.0, 3.0),
-                },
+                # {
+                #     "name": "increase velocity",
+                #     "step": 20000 * 24,
+                #     "apply": lambda env: set_command_velocity(
+                #         env,
+                #         lin_vel_x=(-0.9, 0.9),
+                #         ang_vel_z=(-3.0, 3.0),
+                #         rotation_env_ang_vel_z=(-3.0, 3.0),
+                #     ),
+                # },
             ],
-        },
-    )
-
-    cfg.curriculum["penalize_stepping"] = CurriculumTermCfg(
-        func=stepping_curriculum,
-        params={
-            "step": 5000 * 24,
-            "air_time_weight": 1.0,
-            "no_stepping_penalty_weight": -0.1,
-            "rel_standing_envs": 0.2,
-            "rel_rotation_envs": 0.3,
         },
     )
 
@@ -481,6 +488,10 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "x": (0.0, 0.0),
             "y": (0.0, 0.0),
         }
+
+        cfg.commands["twist"].ranges.lin_vel_x = (0.5, 0.5)
+        cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
+        cfg.commands["twist"].ranges.ang_vel_z = (0.0, 0.0)
 
         # cfg.commands["twist"].ranges.lin_vel_x = (-0.7, 0.7)
         # cfg.commands["twist"].ranges.lin_vel_y = (-0.3, 0.3)
