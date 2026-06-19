@@ -262,7 +262,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.rewards["air_time"].params["command_threshold"] = walking_threshold
     cfg.rewards["air_time"].params["threshold_min"] = 0.125
     cfg.rewards["air_time"].params["threshold_max"] = 0.300
-    cfg.rewards["air_time"].weight = 1.0
+    cfg.rewards["air_time"].weight = 3.0
 
     cfg.rewards["no_stepping"] = RewardTermCfg(
         func=no_stepping_penalty,
@@ -365,7 +365,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                         ),
                         set_stepping_parameters(
                             env,
-                            air_time_weight=1.0,
+                            air_time_weight=3.0,
                             no_stepping_penalty_weight=-1.0,
                             rel_standing_envs=0.2,
                             rel_rotation_envs=0.3,
