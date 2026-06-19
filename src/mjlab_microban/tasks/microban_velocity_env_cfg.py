@@ -371,13 +371,13 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                             rel_standing_envs=0.2,
                             rel_rotation_envs=0.3,
                         ),
-                        # set_push_parameters(
-                        #     env,
-                        #     velocity_range={
-                        #         "x": (-0.35, 0.35),
-                        #         "y": (-0.35, 0.35),
-                        #     },
-                        # ),
+                        set_push_parameters(
+                            env,
+                            velocity_range={
+                                "x": (-0.35, 0.35),
+                                "y": (-0.35, 0.35),
+                            },
+                        ),
                     },
                 },
                 # {
