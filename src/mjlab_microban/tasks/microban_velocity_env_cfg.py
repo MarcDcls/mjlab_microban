@@ -246,7 +246,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     cfg.rewards["upright"].func = local_upright
     cfg.rewards["upright"].params["asset_cfg"].body_names = ("trunk",)
-    cfg.rewards["upright"].params["pitch"] = 5.0
+    cfg.rewards["upright"].params["pitch"] = np.deg2rad(5.0)
     cfg.rewards["upright"].weight = 1.0
     
     cfg.rewards["body_ang_vel"].params["asset_cfg"].body_names = ("trunk",)
@@ -494,7 +494,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     #---------------------------- Play mode -------------------------
     if play:
         cfg.curriculum = {}
-
+        
         cfg.commands["twist"].rel_standing_envs = 0.0
         cfg.commands["twist"].rel_rotation_envs = 0.0
 
