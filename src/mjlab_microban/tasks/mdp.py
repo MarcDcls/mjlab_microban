@@ -8,11 +8,16 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 import torch
+from mjlab.entity import Entity
 from mjlab.envs.manager_based_rl_env import ManagerBasedRlEnv
 from mjlab.managers.curriculum_manager import CurriculumTermCfg
+from mjlab.managers.reward_manager import RewardTermCfg
+from mjlab.managers.scene_entity_config import SceneEntityCfg
+from mjlab.utils.lab_api.math import quat_apply_inverse
 from mjlab.tasks.velocity.mdp.velocity_command import (
     UniformVelocityCommand,
     UniformVelocityCommandCfg,
@@ -91,6 +96,59 @@ class UniformVelocityCommandWithRotationCfg(UniformVelocityCommandCfg):
     
 
 ############################ REWARDS ##############################
+
+_DEFAULT_ASSET_CFG = SceneEntityCfg("robot")
+
+
+class upright:
+    """Reward for keeping the base at a target pitch orientation.
+
+    Penalizes deviation from a given pitch angle (in radians) rather than
+    always rewarding a perfectly vertical posture.
+
+    Args:
+        std: Standard deviation of the Gaussian kernel (controls reward sharpness).
+        pitch: Target pitch angle in radians. 0.0 = perfectly upright.
+               Positive values mean leaning forward.
+        asset_cfg: Scene entity configuration for the robot body to track.
+    """
+
+    def __init__(self, cfg: RewardTermCfg, env: ManagerBasedRlEnv):
+        pass
+
+    def __call__(
+        self,
+        env: ManagerBasedRlEnv,
+        std: float,
+        pitch: float = 0.0,
+        asset_cfg: SceneEntityCfg = _DEFAULT_ASSET_CFG,
+    ) -> torch.Tensor:
+        asset: Entity = env.scene[asset_cfg.name]
+
+        if asset_cfg.body_ids:
+            body_quat_w = asset.data.body_link_quat_w[:, asset_cfg.body_ids, :].squeeze(1)
+        else:
+            body_quat_w = asset.data.root_link_quat_w
+
+        gravity_w = asset.data.gravity_vec_w
+        projected_gravity_b = quat_apply_inverse(body_quat_w, gravity_w)
+
+        # Normalize to unit vector so the error is scale-independent.
+        gravity_norm = projected_gravity_b.norm(dim=-1, keepdim=True).clamp(min=1e-6)
+        projected_gravity_b_unit = projected_gravity_b / gravity_norm
+
+        # At pitch angle θ, the normalised gravity unit vector in body frame has
+        # x = sin(θ), y = 0 (assuming flat ground, no roll, no terrain slope).
+        target_gx = math.sin(pitch)
+        xy_error = (
+            torch.square(projected_gravity_b_unit[:, 0] - target_gx)
+            + torch.square(projected_gravity_b_unit[:, 1])
+        )
+        return torch.exp(-xy_error / std**2)
+
+    def reset(self, env_ids: torch.Tensor) -> None:
+        del env_ids  # Unused.
+
 
 def no_stepping_penalty(
     env: ManagerBasedRlEnv,
