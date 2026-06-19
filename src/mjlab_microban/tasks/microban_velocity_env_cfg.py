@@ -492,7 +492,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     if play:
         cfg.curriculum = {}
 
-        cfg.commands["twist"].rel_standing_envs = 0.0
+        cfg.commands["twist"].rel_standing_envs = 1.0
         cfg.commands["twist"].rel_rotation_envs = 0.0
 
         cfg.events["push_robot"].params["velocity_range"] = {
@@ -503,7 +503,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         cfg.commands["twist"].ranges.lin_vel_x = (0.0, 0.0)
         cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
         cfg.commands["twist"].ranges.ang_vel_z = (0.0, 0.0)
-        cfg.commands["twist"].rotation_env_ang_vel_range = (3.0, 3.0)
+        cfg.commands["twist"].rotation_env_ang_vel_range = (1.0, 1.0)
 
         # cfg.commands["twist"].ranges.lin_vel_x = (-0.7, 0.7)
         # cfg.commands["twist"].ranges.lin_vel_y = (-0.3, 0.3)
