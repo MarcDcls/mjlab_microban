@@ -495,7 +495,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     if play:
         cfg.curriculum = {}
         
-        cfg.commands["twist"].rel_standing_envs = 0.0
+        cfg.commands["twist"].rel_standing_envs = 1.0
         cfg.commands["twist"].rel_rotation_envs = 0.0
 
         cfg.events["push_robot"].params["velocity_range"] = {
