@@ -62,12 +62,12 @@ viz.display(robot.state.q)
 freq = 50
 dt = 1.0 / freq
 t = 0
-n_steps = 20
+n_steps = 16
 duration = n_steps * dt
 
 foot_z = placo.CubicSpline()
 foot_z.add_point(0.0, 0.0, 0.0)
-foot_z.add_point(duration / 4, 0.03, 0.0)
+foot_z.add_point(duration / 4, 0.02, 0.0)
 foot_z.add_point(duration / 2, 0.0, 0.0)
 
 lateral = placo.CubicSpline()
