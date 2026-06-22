@@ -279,7 +279,6 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     )
 
     del cfg.rewards["soft_landing"]
-    # cfg.rewards["soft_landing"].weight = 0.0
 
     cfg.rewards["foot_slip"].params["command_threshold"] = walking_threshold
     cfg.rewards["foot_slip"].weight = -1.0
@@ -312,8 +311,6 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.events["reset_base"].params["pose_range"]["z"] = (0.0, 0.01)
 
     cfg.events["push_robot"].params["velocity_range"] = {
-        # "x": (-0.35, 0.35),
-        # "y": (-0.35, 0.35),
         "x": (-0.5, 0.5),
         "y": (-0.5, 0.5),
     }
@@ -336,7 +333,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         params={
             "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
             "operation": "scale",
-            "ranges": (0.8, 1.2),
+            "ranges": (0.9, 1.1),
         },
     )
 
@@ -346,7 +343,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         params={
             "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
             "operation": "scale",
-            "ranges": (0.8, 1.2),
+            "ranges": (0.9, 1.1),
         },
     )
 

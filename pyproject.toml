@@ -27,5 +27,5 @@ exclude = [
 ]
 
 [tool.uv.sources]
-bam = { path = "../bam/dist/bam-1.0.0-py3-none-any.whl" }
+bam = { git = "ssh://git@github.com/rhoban/bam", branch = "vin_rand" }
 

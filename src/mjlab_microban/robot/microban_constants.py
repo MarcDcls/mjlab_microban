@@ -59,9 +59,9 @@ from bam.mjlab import make_bam_actuator_cfg
 actuators = make_bam_actuator_cfg(
     json_path="../bam/params/xl330/m6.json",
     kp_fw=125,
-    vin_range=(7.0, 7.8),
-    vin_drop_gain_range=(0.0, 0.1),
-    vin_min=6.4,
+    vin_range=(7.0, 8.0),
+    vin_drop_gain_range=(0.0, 0.15),
+    vin_min=6.5,
     target_names_expr=(r".*",),
     delay_min_lag=9,
     delay_max_lag=12,
