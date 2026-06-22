@@ -62,7 +62,7 @@ viz.display(robot.state.q)
 freq = 50
 dt = 1.0 / freq
 t = 0
-n_steps = 16
+n_steps = 20
 duration = n_steps * dt
 
 foot_z = placo.CubicSpline()
