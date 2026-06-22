@@ -372,6 +372,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         params={"command_name": "reference"},
     )
 
+    del cfg.rewards["pose"]
     cfg.rewards["reference_pose"] = RewardTermCfg(
         func=reference_pose_reward,
         weight=1.0,
