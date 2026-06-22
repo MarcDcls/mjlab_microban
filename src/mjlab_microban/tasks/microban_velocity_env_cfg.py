@@ -16,7 +16,7 @@ from mjlab.envs.mdp.actions import JointPositionActionCfg
 from mjlab.managers.scene_entity_config import SceneEntityCfg
 from mjlab.sensor import ContactMatch, ContactSensorCfg
 
-from mjlab_microban.robot.microban_constants import MICROBAN_ROBOT_CFG
+from mjlab_microban.robot.microban_constants import HOME_FRAME, MICROBAN_ROBOT_CFG
 from mjlab.rl import (
     RslRlModelCfg,
     RslRlOnPolicyRunnerCfg,
@@ -70,6 +70,11 @@ from mjlab_microban.tasks.mdp import (
     stepping_curriculum,
     UniformVelocityCommandWithRotation,
     upright as local_upright,
+)
+from mjlab_microban.tasks.reference import (
+    ReferenceCommandCfg,
+    reference_phase,
+    reference_pose_reward,
 )
 
 SCENE_CFG = SceneCfg(
@@ -344,6 +349,37 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
             "operation": "scale",
             "ranges": (0.9, 1.1),
+        },
+    )
+
+    # Reference phase
+
+    joint_names_all = list(HOME_FRAME.joint_pos.keys())
+
+    cfg.commands["reference"] = ReferenceCommandCfg(
+        resampling_time_range=(1e9, 1e9),  # never externally resampled
+        poses_path="poses.pkl",
+        twist_command_name="twist",
+        velocity_threshold=0.05,
+    )
+
+    cfg.observations["actor"].terms["reference_phase"] = ObservationTermCfg(
+        func=reference_phase,
+        params={"command_name": "reference"},
+    )
+    cfg.observations["critic"].terms["reference_phase"] = ObservationTermCfg(
+        func=reference_phase,
+        params={"command_name": "reference"},
+    )
+
+    cfg.rewards["reference_pose"] = RewardTermCfg(
+        func=reference_pose_reward,
+        weight=1.0,
+        params={
+            "std_standing": std_standing,
+            "std_walking": std_walking,
+            "command_name": "reference",
+            "asset_cfg": SceneEntityCfg("robot", joint_names=joint_names_all),
         },
     )
 
