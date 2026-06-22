@@ -301,7 +301,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     command.build = lambda env, _cmd=command: UniformVelocityCommandWithRotation(_cmd, env)
     command.viz.z_offset = 0.5
 
-    command.rel_standing_envs = 0.1
+    command.rel_standing_envs = 0.25
     command.rel_heading_envs = 0.0
     command.rel_rotation_envs = 0.1
 
@@ -529,7 +529,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     if play:
         cfg.curriculum = {}
         
-        cfg.commands["twist"].rel_standing_envs = 0.0
+        # cfg.commands["twist"].rel_standing_envs = 0.0
         # cfg.commands["twist"].rel_rotation_envs = 0.0
 
         cfg.events["push_robot"].params["velocity_range"] = {
