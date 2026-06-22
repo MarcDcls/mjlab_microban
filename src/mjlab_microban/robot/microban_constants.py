@@ -18,31 +18,33 @@ from mjlab.utils.spec_config import CollisionCfg
 MICROBAN_XML: Path = Path(os.path.dirname(__file__)) / "microban" / "robot.xml"
 assert MICROBAN_XML.exists(), f"XML not found: {MICROBAN_XML}"
 
+
 def get_spec() -> mujoco.MjSpec:
     return mujoco.MjSpec.from_file(str(MICROBAN_XML))
 
+
 HOME_FRAME = EntityCfg.InitialStateCfg(
-    pos=(0.0, 0.0, 0.168), #0.1676),
+    pos=(0.0, 0.0, 0.168),  # 0.1676),
     joint_pos={
-        "head": float(np.deg2rad(0.0)),
-        "left_shoulder_roll": float(np.deg2rad(10.0)),
-        "right_shoulder_roll": float(np.deg2rad(-10.0)),
-        "left_shoulder_pitch": float(np.deg2rad(0.0)),
-        "right_shoulder_pitch": float(np.deg2rad(0.0)),
-        "left_elbow": float(np.deg2rad(-20.0)),
-        "right_elbow": float(np.deg2rad(-20.0)),
-        "left_hip_roll": float(np.deg2rad(5.0)),
-        "right_hip_roll": float(np.deg2rad(-5.0)),
-        "left_hip_pitch": float(np.deg2rad(-5.0)),
-        "right_hip_pitch": float(np.deg2rad(-5.0)),
-        "left_hip_yaw": float(np.deg2rad(0.0)),
-        "right_hip_yaw": float(np.deg2rad(0.0)),
-        "left_knee": float(np.deg2rad(0.0)),
-        "right_knee": float(np.deg2rad(0.0)),
-        "left_ankle_roll": float(np.deg2rad(-5.0)),
-        "right_ankle_roll": float(np.deg2rad(5.0)),
-        "left_ankle_pitch": float(np.deg2rad(0.0)),
-        "right_ankle_pitch": float(np.deg2rad(0.0)),
+        "head": 0.0000,
+        "left_shoulder_roll": 0.1745,
+        "right_shoulder_roll": -0.1745,
+        "left_shoulder_pitch": 0.0000,
+        "right_shoulder_pitch": 0.0000,
+        "left_elbow": -0.3491,
+        "right_elbow": -0.3491,
+        "left_hip_roll": 0.0418,
+        "right_hip_roll": -0.0418,
+        "left_hip_pitch": -0.4709,
+        "right_hip_pitch": -0.4709,
+        "left_hip_yaw": -0.0000,
+        "right_hip_yaw": -0.0000,
+        "left_knee": 1.1479,
+        "right_knee": 1.1479,
+        "left_ankle_roll": -0.0418,
+        "right_ankle_roll": 0.0418,
+        "left_ankle_pitch": -0.6770,
+        "right_ankle_pitch": -0.6770,
     },
     joint_vel={r".*": 0.0},
 )
