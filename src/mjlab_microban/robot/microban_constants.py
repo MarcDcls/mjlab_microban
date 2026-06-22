@@ -54,16 +54,16 @@ FULL_COLLISION = CollisionCfg(
     friction={r"^(left|right)_foot_collision$": (1.0,)},
 )
 
-from bam.mjlab import make_bam_actuator_cfg
+from bam.mjlab import BamActuatorCfg
 
-actuators = make_bam_actuator_cfg(
+actuators = BamActuatorCfg(
     motor_name="xl330",
     model="m6",
+    target_names_expr=(r".*",),
     kp_fw=125,
     vin_range=(7.0, 8.0),
     vin_drop_gain_range=(1.0, 3.0),
     vin_min=4.5,
-    target_names_expr=(r".*",),
     delay_min_lag=9,
     delay_max_lag=12,
 )
