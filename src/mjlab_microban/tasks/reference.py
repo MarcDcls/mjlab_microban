@@ -141,7 +141,7 @@ class reference_pose_reward:
 
     def __init__(self, cfg: RewardTermCfg, env: ManagerBasedRlEnv):
         asset: Entity = env.scene[cfg.params["asset_cfg"].name]
-        _, joint_names = asset.find_joints(cfg.params["asset_cfg"].joint_names)
+        _, joint_names = asset.find_joints(cfg.params["asset_cfg"].joint_names, preserve_order=True)
 
         _, _, std_standing_vals = resolve_matching_names_values(
             data=cfg.params["std_standing"], list_of_strings=joint_names

@@ -360,7 +360,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         resampling_time_range=(1e9, 1e9),  # never externally resampled
         poses_path="poses.pkl",
         twist_command_name="twist",
-        velocity_threshold=0.05,
+        velocity_threshold=0.01,
     )
 
     cfg.observations["actor"].terms["reference_phase"] = ObservationTermCfg(
@@ -380,7 +380,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "std_standing": std_standing,
             "std_walking": std_walking,
             "command_name": "reference",
-            "asset_cfg": SceneEntityCfg("robot", joint_names=joint_names_all),
+            "asset_cfg": SceneEntityCfg("robot", joint_names=joint_names_all, preserve_order=True),
         },
     )
 
@@ -530,7 +530,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         cfg.curriculum = {}
         
         cfg.commands["twist"].rel_standing_envs = 0.0
-        cfg.commands["twist"].rel_rotation_envs = 0.0
+        # cfg.commands["twist"].rel_rotation_envs = 0.0
 
         cfg.events["push_robot"].params["velocity_range"] = {
             "x": (0.0, 0.0),
