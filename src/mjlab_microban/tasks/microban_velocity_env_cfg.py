@@ -173,13 +173,17 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.observations["actor"].terms["joint_pos"] = ObservationTermCfg(
         func=mdp.joint_pos_rel,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=(dofs_filter,))},
-        noise=Unoise(n_min=-0.01, n_max=0.01),
+        noise=Unoise(n_min=-0.01, n_max=0.01),    
+        delay_min_lag=3,
+        delay_max_lag=4,
     )
 
     cfg.observations["actor"].terms["joint_vel"] = ObservationTermCfg(
         func=mdp.joint_vel_rel,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=(dofs_filter,))},
         noise=Unoise(n_min=-0.25, n_max=0.25),
+        delay_min_lag=4,
+        delay_max_lag=5,
     )
 
     # Observation delays/noises to simulate IMU sensor readings (only for actor, not critic)
