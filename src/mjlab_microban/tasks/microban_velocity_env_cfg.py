@@ -178,18 +178,22 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.observations["actor"].terms["joint_pos"] = ObservationTermCfg(
         func=mdp.joint_pos_rel,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=(dofs_filter,))},
-        noise=Unoise(n_min=-0.01, n_max=0.01),
+        noise=Unoise(n_min=-0.001, n_max=0.001),
+        min_delay_lag=3,
+        max_delay_lag=4,
     )
 
     cfg.observations["actor"].terms["joint_vel"] = ObservationTermCfg(
         func=mdp.joint_vel_rel,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=(dofs_filter,))},
         noise=Unoise(n_min=-0.25, n_max=0.25),
+        min_delay_lag=4,
+        max_delay_lag=5,
     )
 
     # Observation delays/noises to simulate IMU sensor readings (only for actor, not critic)
     cfg.observations["actor"].terms["projected_gravity"] = deepcopy(cfg.observations["actor"].terms["projected_gravity"])
-    cfg.observations["actor"].terms["projected_gravity"].noise = Unoise(n_min=-0.005, n_max=0.005)
+    cfg.observations["actor"].terms["projected_gravity"].noise = Unoise(n_min=-0.01, n_max=0.01)
 
     cfg.observations["actor"].terms["base_ang_vel"] = deepcopy(cfg.observations["actor"].terms["base_ang_vel"])
     cfg.observations["actor"].terms["base_ang_vel"].noise = Unoise(n_min=-0.03, n_max=0.03)
@@ -204,8 +208,8 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 3
     cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 4
     cfg.observations["actor"].terms["base_ang_vel"].delay_update_period = 64
-    cfg.observations["actor"].terms["projected_gravity"].delay_min_lag = 3
-    cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 4
+    cfg.observations["actor"].terms["projected_gravity"].delay_min_lag = 4
+    cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 5
     cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
     #---------------------------- Rewards ---------------------------
