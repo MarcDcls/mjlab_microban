@@ -360,7 +360,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "stages": [
                 {
                     "name": "penalize stepping + increase velocity",
-                    "step": 5000 * 24,
+                    "step": 3000 * 24,
                     "apply": lambda env: {
                         set_command_velocity(
                             env,
