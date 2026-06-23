@@ -26,7 +26,7 @@ T_world_right_foot = tf.translation_matrix((trunk_x, -trunk_y, 0.0))
 trunk_orientation = solver.add_orientation_task(
     "body", tf.rotation_matrix(0.0, [0, 1, 0])[:3, :3]
 )
-com = solver.add_position_task("body", np.array([0.0, 0.0, 0.14]))
+com = solver.add_position_task("body", np.array([0.0, 0.0, 0.16]))
 
 left_foot_task = solver.add_frame_task("left_foot", T_world_left_foot)
 right_foot_task = solver.add_frame_task("right_foot", T_world_right_foot)
