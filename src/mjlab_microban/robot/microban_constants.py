@@ -66,8 +66,9 @@ actuators = BamActuatorCfg(
     vin_range=(7.0, 8.0),
     vin_drop_gain_range=(0.0, 0.0),
     vin_min=6.5,
-    delay_min_lag=4,
-    delay_max_lag=8,
+    max_current=1.75,
+    delay_min_lag=9,
+    delay_max_lag=12,
 )
 
 # -- Old actuator (XML position, MuJoCo default) --
