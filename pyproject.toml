@@ -27,5 +27,5 @@ exclude = [
 ]
 
 [tool.uv.sources]
-bam = { git = "ssh://git@github.com/rhoban/bam", branch = "vin_rand" }
+bam = { git = "ssh://git@github.com/rhoban/bam", branch = "bam" }
 
