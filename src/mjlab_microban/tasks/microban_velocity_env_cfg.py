@@ -293,7 +293,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     # Foot-site separation is 0.072 m when standing straight
     cfg.rewards["feet_distance"] = RewardTermCfg(
         func=feet_distance_penalty,
-        weight=-25.0,
+        weight=-1000.0,
         params={
             "min_dist": 0.085,
             "asset_cfg": SceneEntityCfg("robot", site_names=foot_site_names),
