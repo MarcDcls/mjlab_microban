@@ -285,7 +285,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     cfg.rewards["self_collisions"] = RewardTermCfg(
         func=mdp.self_collision_cost,
-        weight=-1.0,
+        weight=-10.0,
         params={"sensor_name": self_collision_sensor_cfg.name},
     )
 
