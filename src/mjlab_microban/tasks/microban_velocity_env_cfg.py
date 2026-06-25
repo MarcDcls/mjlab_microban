@@ -295,7 +295,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         func=feet_distance_penalty,
         weight=-25.0,
         params={
-            "min_dist": 0.075,
+            "min_dist": 0.085,
             "asset_cfg": SceneEntityCfg("robot", site_names=foot_site_names),
         },
     )
