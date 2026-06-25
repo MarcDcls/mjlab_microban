@@ -150,6 +150,31 @@ class upright:
         del env_ids  # Unused.
 
 
+def feet_distance_penalty(
+    env: ManagerBasedRlEnv,
+    min_dist: float,
+    asset_cfg: SceneEntityCfg = _DEFAULT_ASSET_CFG,
+) -> torch.Tensor:
+    """Penalize the feet getting too close to each other in the horizontal plane.
+
+    Discourages the robot from stepping on its own feet by adding a smooth,
+    anticipatory cost as soon as the horizontal distance between the two foot
+    sites drops below ``min_dist``. Above the threshold the cost is zero.
+
+    Returns ``clamp(min_dist - d, min=0)`` per env (use with a negative weight),
+    where ``d`` is the horizontal (xy) distance between the two foot sites.
+
+    Args:
+        min_dist: Minimum desired horizontal distance between feet, in meters.
+        asset_cfg: Scene entity configuration whose ``site_names`` select exactly
+            the two foot sites.
+    """
+    asset: Entity = env.scene[asset_cfg.name]
+    foot_pos_xy = asset.data.site_pos_w[:, asset_cfg.site_ids, :2]  # [B, 2, 2]
+    dist = torch.norm(foot_pos_xy[:, 0] - foot_pos_xy[:, 1], dim=-1)  # [B]
+    return torch.clamp(min_dist - dist, min=0.0)
+
+
 def no_stepping_penalty(
     env: ManagerBasedRlEnv,
     sensor_name: str,

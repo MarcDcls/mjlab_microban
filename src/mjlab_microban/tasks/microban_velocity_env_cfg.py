@@ -65,7 +65,8 @@ from mjlab_microban.tasks.mdp import (
     set_command_velocity,
     set_stepping_parameters,
     set_push_parameters,
-    no_stepping_penalty, 
+    no_stepping_penalty,
+    feet_distance_penalty,
     penalize_stepping_while_standing,
     stepping_curriculum,
     UniformVelocityCommandWithRotation,
@@ -285,8 +286,18 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     cfg.rewards["self_collisions"] = RewardTermCfg(
         func=mdp.self_collision_cost,
-        weight=-10.0,
+        weight=-1.0,
         params={"sensor_name": self_collision_sensor_cfg.name},
+    )
+
+    # Foot-site separation is 0.072 m when standing straight
+    cfg.rewards["feet_distance"] = RewardTermCfg(
+        func=feet_distance_penalty,
+        weight=-25.0,
+        params={
+            "min_dist": 0.075,
+            "asset_cfg": SceneEntityCfg("robot", site_names=foot_site_names),
+        },
     )
 
     #---------------------------- Commands --------------------------
@@ -411,9 +422,13 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         # cfg.events["reset_base"].interval_range_s = (0.0, 0.0)
         # cfg.events["reset_base"].mode = "interval"
 
-        cfg.observations["actor"].enable_corruption = False
-
+        # del cfg.rewards["track_linear_velocity"]
+        # del cfg.rewards["track_angular_velocity"]
+        # del cfg.rewards["pose"]
+        # del cfg.rewards["upright"]
         # cfg.terminations = {}
+
+        cfg.observations["actor"].enable_corruption = False
 
         # Can be used to print something every step
         def debug(env: ManagerBasedRlEnv, _):
