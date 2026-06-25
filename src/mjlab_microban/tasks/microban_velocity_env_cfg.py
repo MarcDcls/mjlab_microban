@@ -174,16 +174,16 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         func=mdp.joint_pos_rel,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=(dofs_filter,))},
         noise=Unoise(n_min=-0.001, n_max=0.001),    
-        delay_min_lag=3,
-        delay_max_lag=4,
+        delay_min_lag=0,
+        delay_max_lag=0,
     )
 
     cfg.observations["actor"].terms["joint_vel"] = ObservationTermCfg(
         func=mdp.joint_vel_rel,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=(dofs_filter,))},
         noise=Unoise(n_min=-0.25, n_max=0.25),
-        delay_min_lag=4,
-        delay_max_lag=5,
+        delay_min_lag=0,
+        delay_max_lag=1,
     )
 
     # Observation delays/noises to simulate IMU sensor readings (only for actor, not critic)
@@ -200,11 +200,11 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     # cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 1
     # cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
-    cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 3
-    cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 4
+    cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 0
+    cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 3
     cfg.observations["actor"].terms["base_ang_vel"].delay_update_period = 64
-    cfg.observations["actor"].terms["projected_gravity"].delay_min_lag = 4
-    cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 5
+    cfg.observations["actor"].terms["projected_gravity"].delay_min_lag = 0
+    cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 3
     cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
     #---------------------------- Rewards ---------------------------
@@ -372,16 +372,16 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                             env,
                             air_time_weight=3.0,
                             no_stepping_penalty_weight=-1.0,
-                            rel_standing_envs=0.2,
-                            rel_rotation_envs=0.3,
+                            rel_standing_envs=0.1,
+                            rel_rotation_envs=0.1,
                         ),
-                        set_push_parameters(
-                            env,
-                            velocity_range={
-                                "x": (-0.35, 0.35),
-                                "y": (-0.35, 0.35),
-                            },
-                        ),
+                        # set_push_parameters(
+                        #     env,
+                        #     velocity_range={
+                        #         "x": (-0.35, 0.35),
+                        #         "y": (-0.35, 0.35),
+                        #     },
+                        # ),
                     },
                 },
                 # {
