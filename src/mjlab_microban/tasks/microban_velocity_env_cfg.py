@@ -277,16 +277,6 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.rewards["air_time"].params["threshold_max"] = 0.300
     cfg.rewards["air_time"].weight = 3.0
 
-    cfg.rewards["no_stepping"] = RewardTermCfg(
-        func=no_stepping_penalty,
-        weight=0.0,
-        params={
-            "sensor_name": feet_ground_sensor_cfg.name,
-            "command_name": "twist",
-            "command_threshold": walking_threshold,
-        },
-    )
-
     del cfg.rewards["soft_landing"]
 
     cfg.rewards["foot_slip"].params["command_threshold"] = walking_threshold
@@ -298,6 +288,16 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         func=mdp.self_collision_cost,
         weight=-1.0,
         params={"sensor_name": self_collision_sensor_cfg.name},
+    )
+
+    # Foot-site separation is 0.072 m when standing straight
+    cfg.rewards["feet_distance"] = RewardTermCfg(
+        func=feet_distance_penalty,
+        weight=-1000.0,
+        params={
+            "min_dist": 0.08,
+            "asset_cfg": SceneEntityCfg("robot", site_names=foot_site_names),
+        },
     )
 
     #---------------------------- Commands --------------------------
@@ -405,20 +405,6 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                             ang_vel_z=(-1.5, 1.5),
                             rotation_env_ang_vel_z=(-3.0, 3.0),
                         ),
-                        # set_stepping_parameters(
-                        #     env,
-                        #     air_time_weight=3.0,
-                        #     no_stepping_penalty_weight=-1.0,
-                        #     rel_standing_envs=0.2,
-                        #     rel_rotation_envs=0.3,
-                        # ),
-                        # set_push_parameters(
-                        #     env,
-                        #     velocity_range={
-                        #         "x": (-0.35, 0.35),
-                        #         "y": (-0.35, 0.35),
-                        #     },
-                        # ),
                     },
                 },
             ],
