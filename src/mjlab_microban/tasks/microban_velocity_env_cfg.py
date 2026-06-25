@@ -249,7 +249,8 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     cfg.rewards["upright"].func = local_upright
     cfg.rewards["upright"].params["asset_cfg"].body_names = ("trunk",)
-    cfg.rewards["upright"].params["pitch"] = np.deg2rad(5.0)
+    cfg.rewards["upright"].params["pitch"] = np.deg2rad(10.0)
+    cfg.rewards["upright"].params["std"] = np.sqrt(0.1)
     cfg.rewards["upright"].weight = 1.0
     
     cfg.rewards["body_ang_vel"].params["asset_cfg"].body_names = ("trunk",)
@@ -391,7 +392,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "stages": [
                 {
                     "name": "penalize stepping + increase velocity",
-                    "step": 5000 * 24,
+                    "step": 3000 * 24,
                     "apply": lambda env: {
                         set_command_velocity(
                             env,
