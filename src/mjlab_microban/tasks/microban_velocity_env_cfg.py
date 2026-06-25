@@ -295,7 +295,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         func=feet_distance_penalty,
         weight=-1000.0,
         params={
-            "min_dist": 0.085,
+            "min_dist": 0.08,
             "asset_cfg": SceneEntityCfg("robot", site_names=foot_site_names),
         },
     )
@@ -422,11 +422,11 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         # cfg.events["reset_base"].interval_range_s = (0.0, 0.0)
         # cfg.events["reset_base"].mode = "interval"
 
-        # del cfg.rewards["track_linear_velocity"]
-        # del cfg.rewards["track_angular_velocity"]
-        # del cfg.rewards["pose"]
-        # del cfg.rewards["upright"]
-        # cfg.terminations = {}
+        del cfg.rewards["track_linear_velocity"]
+        del cfg.rewards["track_angular_velocity"]
+        del cfg.rewards["pose"]
+        del cfg.rewards["upright"]
+        cfg.terminations = {}
 
         cfg.observations["actor"].enable_corruption = False
 
