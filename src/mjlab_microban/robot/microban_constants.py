@@ -27,14 +27,14 @@ HOME_FRAME = EntityCfg.InitialStateCfg(
         "head": float(np.deg2rad(0.0)),
         "left_shoulder_roll": float(np.deg2rad(10.0)),
         "right_shoulder_roll": float(np.deg2rad(-10.0)),
-        "left_shoulder_pitch": float(np.deg2rad(10.0)),
-        "right_shoulder_pitch": float(np.deg2rad(10.0)),
+        "left_shoulder_pitch": float(np.deg2rad(0.0)),
+        "right_shoulder_pitch": float(np.deg2rad(0.0)),
         "left_elbow": float(np.deg2rad(-20.0)),
         "right_elbow": float(np.deg2rad(-20.0)),
         "left_hip_roll": float(np.deg2rad(5.0)),
         "right_hip_roll": float(np.deg2rad(-5.0)),
-        "left_hip_pitch": float(np.deg2rad(0.0)),
-        "right_hip_pitch": float(np.deg2rad(0.0)),
+        "left_hip_pitch": float(np.deg2rad(-10.0)),
+        "right_hip_pitch": float(np.deg2rad(-10.0)),
         "left_hip_yaw": float(np.deg2rad(0.0)),
         "right_hip_yaw": float(np.deg2rad(0.0)),
         "left_knee": float(np.deg2rad(0.0)),
@@ -54,15 +54,19 @@ FULL_COLLISION = CollisionCfg(
     friction={r"^(left|right)_foot_collision$": (1.0,)},
 )
 
-from bam.mjlab import make_bam_actuator_cfg
+from bam.mjlab import BamActuatorCfg
 
-actuators = make_bam_actuator_cfg(
-    json_path="../bam/params/xl330/m6.json",
-    kp_fw=125,
-    vin=8.0,
+actuators = BamActuatorCfg(
+    motor_name="xl330",
+    model="m6",
     target_names_expr=(r".*",),
-    delay_min_lag=9,
-    delay_max_lag=12,
+    kp_fw=125,
+    vin_range=(7.0, 8.0),
+    vin_drop_gain_range=(0.0, 0.2),
+    vin_min=6.0,
+    max_current=1.75,
+    delay_min_lag=0,
+    delay_max_lag=3,
 )
 
 # -- Old actuator (XML position, MuJoCo default) --

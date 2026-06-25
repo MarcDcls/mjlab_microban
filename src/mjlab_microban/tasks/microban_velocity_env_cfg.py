@@ -69,6 +69,7 @@ from mjlab_microban.tasks.mdp import (
     penalize_stepping_while_standing,
     stepping_curriculum,
     UniformVelocityCommandWithRotation,
+    upright as local_upright,
 )
 
 SCENE_CFG = SceneCfg(
@@ -172,18 +173,22 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.observations["actor"].terms["joint_pos"] = ObservationTermCfg(
         func=mdp.joint_pos_rel,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=(dofs_filter,))},
-        noise=Unoise(n_min=-0.01, n_max=0.01),
+        noise=Unoise(n_min=-0.001, n_max=0.001),    
+        delay_min_lag=0,
+        delay_max_lag=0,
     )
 
     cfg.observations["actor"].terms["joint_vel"] = ObservationTermCfg(
         func=mdp.joint_vel_rel,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=(dofs_filter,))},
         noise=Unoise(n_min=-0.25, n_max=0.25),
+        delay_min_lag=0,
+        delay_max_lag=1,
     )
 
     # Observation delays/noises to simulate IMU sensor readings (only for actor, not critic)
     cfg.observations["actor"].terms["projected_gravity"] = deepcopy(cfg.observations["actor"].terms["projected_gravity"])
-    cfg.observations["actor"].terms["projected_gravity"].noise = Unoise(n_min=-0.005, n_max=0.005)
+    cfg.observations["actor"].terms["projected_gravity"].noise = Unoise(n_min=-0.01, n_max=0.01)
 
     cfg.observations["actor"].terms["base_ang_vel"] = deepcopy(cfg.observations["actor"].terms["base_ang_vel"])
     cfg.observations["actor"].terms["base_ang_vel"].noise = Unoise(n_min=-0.03, n_max=0.03)
@@ -195,11 +200,11 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     # cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 1
     # cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
-    cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 3
-    cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 4
+    cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 0
+    cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 3
     cfg.observations["actor"].terms["base_ang_vel"].delay_update_period = 64
-    cfg.observations["actor"].terms["projected_gravity"].delay_min_lag = 3
-    cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 4
+    cfg.observations["actor"].terms["projected_gravity"].delay_min_lag = 0
+    cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 3
     cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
     #---------------------------- Rewards ---------------------------
@@ -243,7 +248,10 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.rewards["pose"].params["walking_threshold"] = walking_threshold
     cfg.rewards["pose"].weight = 1.0
 
+    cfg.rewards["upright"].func = local_upright
     cfg.rewards["upright"].params["asset_cfg"].body_names = ("trunk",)
+    cfg.rewards["upright"].params["pitch"] = np.deg2rad(10.0)
+    cfg.rewards["upright"].params["std"] = np.sqrt(0.1)
     cfg.rewards["upright"].weight = 1.0
     
     cfg.rewards["body_ang_vel"].params["asset_cfg"].body_names = ("trunk",)
@@ -276,7 +284,6 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     )
 
     del cfg.rewards["soft_landing"]
-    # cfg.rewards["soft_landing"].weight = 0.0
 
     cfg.rewards["foot_slip"].params["command_threshold"] = walking_threshold
     cfg.rewards["foot_slip"].weight = -1.0
@@ -309,8 +316,6 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     cfg.events["reset_base"].params["pose_range"]["z"] = (0.0, 0.01)
 
     cfg.events["push_robot"].params["velocity_range"] = {
-        # "x": (-0.35, 0.35),
-        # "y": (-0.35, 0.35),
         "x": (-0.5, 0.5),
         "y": (-0.5, 0.5),
     }
@@ -333,7 +338,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         params={
             "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
             "operation": "scale",
-            "ranges": (0.8, 1.2),
+            "ranges": (0.9, 1.1),
         },
     )
 
@@ -343,7 +348,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         params={
             "asset_cfg": SceneEntityCfg("robot", joint_names=(r".*",)),
             "operation": "scale",
-            "ranges": (0.8, 1.2),
+            "ranges": (0.9, 1.1),
         },
     )
 
@@ -356,7 +361,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "stages": [
                 {
                     "name": "penalize stepping + increase velocity",
-                    "step": 5000 * 24,
+                    "step": 3000 * 24,
                     "apply": lambda env: {
                         set_command_velocity(
                             env,
@@ -368,119 +373,14 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                             env,
                             air_time_weight=3.0,
                             no_stepping_penalty_weight=-1.0,
-                            rel_standing_envs=0.2,
-                            rel_rotation_envs=0.3,
+                            rel_standing_envs=0.1,
+                            rel_rotation_envs=0.1,
                         ),
-                        # set_push_parameters(
-                        #     env,
-                        #     velocity_range={
-                        #         "x": (-0.35, 0.35),
-                        #         "y": (-0.35, 0.35),
-                        #     },
-                        # ),
                     },
                 },
-                # {
-                #     "name": "increase velocity",
-                #     "step": 20000 * 24,
-                #     "apply": lambda env: set_command_velocity(
-                #         env,
-                #         lin_vel_x=(-0.9, 0.9),
-                #         ang_vel_z=(-3.0, 3.0),
-                #         rotation_env_ang_vel_z=(-3.0, 3.0),
-                #     ),
-                # },
             ],
         },
     )
-
-    # cfg.curriculum["staged_curriculum"] = CurriculumTermCfg(
-    #     func=reward_based_staged_curriculum,
-    #     params={
-    #         "stages": [
-    #             {
-    #                 "name": "learning to step",
-    #                 "reward_term_name": "track_angular_velocity",
-    #                 "threshold": 1.0,
-    #                 "apply": lambda env: penalize_stepping_while_standing(
-    #                     env,
-    #                     air_time_weight=1.0,
-    #                     no_stepping_penalty_weight=-0.1,
-    #                 ),
-    #             },
-    #             {
-    #                 "name": "learning to walk forward",
-    #                 "reward_term_name": "track_linear_velocity",
-    #                 "threshold": 1.0,
-    #                 "apply": lambda env: (
-    #                     set_command_velocity(env, lin_vel_x=(-0.7, 0.7)),
-    #                     # setattr(env.command_manager.get_term_cfg("twist"), "rel_rotation_envs", 0.3),
-    #                 ),
-    #             },
-    #             {
-    #                 "name": "learning to turn",
-    #                 "reward_term_name": "track_angular_velocity",
-    #                 "threshold": 0.7,
-    #                 "apply": lambda env: set_command_velocity(
-    #                     env, 
-    #                     ang_vel_z=(-2.0, 2.0),
-    #                 ),
-    #             }
-    #         ],
-    #     },
-    # )
-
-    # cfg.curriculum["track_linear_velocity_reward"] = CurriculumTermCfg(
-    #     func=reward_based_curriculum,
-    #     params={
-    #         "reward_term_name": "track_linear_velocity",
-    #         "stages": [
-    #             {
-    #                 "name": "command lin_vel increase",
-    #                 "threshold": 1.5,
-    #                 "apply": lambda env: set_command_velocity(
-    #                     env,
-    #                     lin_vel_x=(-0.7, 0.7),
-    #                 ),
-    #             },
-    #         ],
-    #     },
-    # )
-
-    # cfg.curriculum["track_angular_velocity_reward"] = CurriculumTermCfg(
-    #     func=reward_based_curriculum,
-    #     params={
-    #         "reward_term_name": "track_angular_velocity",
-    #         "stages": [
-    #             {
-    #                 "name": "command ang_vel increase",
-    #                 "threshold": 1.0,
-    #                 "apply": lambda env: set_command_velocity(
-    #                     env,
-    #                     ang_vel_z=(-1.5, 1.5),
-    #                 ),
-    #             },
-    #         ],
-    #     },
-    # )
-
-    # cfg.curriculum["air_time_reward"] = CurriculumTermCfg(
-    #     func=reward_based_curriculum,
-    #     params={
-    #         "reward_term_name": "air_time",
-    #         "stages": [
-    #             {
-    #                 "name": "penalize stepping while standing",
-    #                 "threshold": 1.2,
-    #                 "apply": lambda env: penalize_stepping_while_standing(
-    #                     env,
-    #                     air_time_weight=0.1,
-    #                     no_stepping_penalty_weight=-0.1,
-    #                 ),
-    #             },
-    #         ],
-    #     },
-    # )
 
     #---------------------------- Terminations ----------------------
     cfg.terminations["fell_over"] = TerminationTermCfg(
@@ -491,8 +391,8 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     #---------------------------- Play mode -------------------------
     if play:
         cfg.curriculum = {}
-
-        cfg.commands["twist"].rel_standing_envs = 1.0
+        
+        cfg.commands["twist"].rel_standing_envs = 0.0
         cfg.commands["twist"].rel_rotation_envs = 0.0
 
         cfg.events["push_robot"].params["velocity_range"] = {
@@ -500,7 +400,7 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "y": (0.0, 0.0),
         }
 
-        cfg.commands["twist"].ranges.lin_vel_x = (0.0, 0.0)
+        cfg.commands["twist"].ranges.lin_vel_x = (0.5, 0.5)
         cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
         cfg.commands["twist"].ranges.ang_vel_z = (0.0, 0.0)
         cfg.commands["twist"].rotation_env_ang_vel_range = (1.0, 1.0)
