@@ -65,6 +65,7 @@ from mjlab_microban.tasks.mdp import (
     set_command_velocity,
     set_stepping_parameters,
     set_push_parameters,
+    feet_distance_penalty,
     no_stepping_penalty, 
     penalize_stepping_while_standing,
     stepping_curriculum,
@@ -197,13 +198,6 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
     cfg.observations["actor"].terms["base_ang_vel"] = deepcopy(cfg.observations["actor"].terms["base_ang_vel"])
     cfg.observations["actor"].terms["base_ang_vel"].noise = Unoise(n_min=-0.03, n_max=0.03)
-
-    # cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 0
-    # cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 1
-    # cfg.observations["actor"].terms["base_ang_vel"].delay_update_period = 64
-    # cfg.observations["actor"].terms["projected_gravity"].delay_min_lag = 1
-    # cfg.observations["actor"].terms["projected_gravity"].delay_max_lag = 1
-    # cfg.observations["actor"].terms["projected_gravity"].delay_update_period = 64
 
     cfg.observations["actor"].terms["base_ang_vel"].delay_min_lag = 0
     cfg.observations["actor"].terms["base_ang_vel"].delay_max_lag = 3
