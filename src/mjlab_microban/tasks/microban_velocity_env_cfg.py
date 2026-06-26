@@ -382,13 +382,13 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                         ),
                     },
                 },
-                {
-                    "name": "increase action rate penalty",
-                    "step": 5000 * 24,
-                    "apply": lambda env: setattr(
-                        env.reward_manager.get_term_cfg("action_rate_l2"), "weight", -0.5
-                    ),
-                }
+                # {
+                #     "name": "increase action rate penalty",
+                #     "step": 5000 * 24,
+                #     "apply": lambda env: setattr(
+                #         env.reward_manager.get_term_cfg("action_rate_l2"), "weight", -0.5
+                #     ),
+                # }
             ],
         },
     )
