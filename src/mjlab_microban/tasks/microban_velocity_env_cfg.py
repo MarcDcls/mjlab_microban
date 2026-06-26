@@ -382,6 +382,13 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                         ),
                     },
                 },
+                {
+                    "name": "increase action rate penalty",
+                    "step": 5000 * 24,
+                    "apply": lambda env: setattr(
+                        env.reward_manager.get_term_cfg("action_rate_l2"), "weight", -0.5
+                    ),
+                }
             ],
         },
     )
@@ -404,10 +411,10 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
             "y": (0.0, 0.0),
         }
 
-        cfg.commands["twist"].ranges.lin_vel_x = (0.5, 0.5)
-        cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
-        cfg.commands["twist"].ranges.ang_vel_z = (0.0, 0.0)
-        cfg.commands["twist"].rotation_env_ang_vel_range = (1.0, 1.0)
+        # cfg.commands["twist"].ranges.lin_vel_x = (0.5, 0.5)
+        # cfg.commands["twist"].ranges.lin_vel_y = (0.0, 0.0)
+        # cfg.commands["twist"].ranges.ang_vel_z = (0.0, 0.0)
+        # cfg.commands["twist"].rotation_env_ang_vel_range = (1.0, 1.0)
 
         # cfg.commands["twist"].ranges.lin_vel_x = (-0.7, 0.7)
         # cfg.commands["twist"].ranges.lin_vel_y = (-0.3, 0.3)
@@ -491,5 +498,5 @@ MicrobanVelocityRlCfg = RslRlOnPolicyRunnerCfg(
     experiment_name="mjlab_microban_velocity",
     save_interval=500,
     num_steps_per_env=24,
-    max_iterations=30_000,
+    max_iterations=15_000,
 )
