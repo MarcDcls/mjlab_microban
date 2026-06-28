@@ -1,5 +1,3 @@
-src/mjlab_microban/tasks/microban_standup_env_cfg.py
-
 **/__pycache__/
 
 src/mjlab_microban/robot/microban/scad/
