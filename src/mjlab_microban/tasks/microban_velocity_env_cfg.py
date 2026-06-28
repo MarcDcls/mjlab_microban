@@ -382,13 +382,6 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
                         ),
                     },
                 },
-                # {
-                #     "name": "increase action rate penalty",
-                #     "step": 5000 * 24,
-                #     "apply": lambda env: setattr(
-                #         env.reward_manager.get_term_cfg("action_rate_l2"), "weight", -0.5
-                #     ),
-                # }
             ],
         },
     )
@@ -429,11 +422,11 @@ def make_microban_velocity_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
         # cfg.events["reset_base"].interval_range_s = (0.0, 0.0)
         # cfg.events["reset_base"].mode = "interval"
 
-        del cfg.rewards["track_linear_velocity"]
-        del cfg.rewards["track_angular_velocity"]
-        del cfg.rewards["pose"]
-        del cfg.rewards["upright"]
-        cfg.terminations = {}
+        # del cfg.rewards["track_linear_velocity"]
+        # del cfg.rewards["track_angular_velocity"]
+        # del cfg.rewards["pose"]
+        # del cfg.rewards["upright"]
+        # cfg.terminations = {}
 
         cfg.observations["actor"].enable_corruption = False
 
