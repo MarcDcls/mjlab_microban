@@ -58,13 +58,14 @@ from bam.mjlab import BamActuatorCfg
 
 actuators = BamActuatorCfg(
     motor_name="xl330",
-    model="m1",
+    model="m6",
     target_names_expr=(r".*",),
     kp_fw=125,
     vin_range=(7.0, 8.0),
-    vin_drop_gain_range=(0.0, 0.2),
+    # vin_drop_gain_range=(0.0, 0.2),
+    vin_drop_gain_range=(0.0, 0.0),
     vin_min=6.0,
-    max_current=1.75,
+    # max_current=1.75,
     delay_min_lag=3,
     delay_max_lag=6,
 )
