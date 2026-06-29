@@ -81,9 +81,11 @@ uv run python src/mjlab_microban/scripts/export_onnx.py --checkpoint [path to yo
 
 The transfer on the real robot is always a challenge due to the sim-to-real gap. However, the policies trained in this repository have been successfully transferred to the real Microban robot. It is possible due to a combination of domain randomization and a well-tuned modelisation of the actuators (delays, friction, voltage drop, current clipping, etc.). This modelisation is done using the [BAM](https://github.com/Rhoban/bam) library.
 
-TODO: Add video or gif
+Here is a video of the trained agent being transferred to the real robot: [https://youtu.be/1pnFrT_jfXQ](https://youtu.be/1pnFrT_jfXQ)
 
-Here is a video of the trained agent being transferred to the real robot: [![Video](https://img.youtube.com/vi/0g1k5r6J7x4/0.jpg)](https://www.youtube.com/watch?v=0g1k5r6J7x4)
+<p align="center">
+  <img width="70%" alt="image" src="https://github.com/user-attachments/assets/dd91b082-faf0-4c73-a216-fe9b633f51b3" />
+</p>
 
 ## License
 
