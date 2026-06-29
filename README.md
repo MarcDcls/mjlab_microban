@@ -23,6 +23,10 @@ uv sync
 
 ## Using a velocity agent
 
+<p align="center">
+  <img width="480" alt="MicrobanSimu" src="https://github.com/user-attachments/assets/fa79d712-e2ff-4452-b3ef-7ac41b87ff13" />
+</p>
+
 You can use a pre-trained agent directly in its MjLab environment (GPU required), where random velocity commands are given to the robot at regular intervals.
 Linear velocity commands are represented by a blue arrow, while angular velocity commands are represented by a green vertical one.
 
@@ -31,8 +35,6 @@ uv run play Mjlab-Velocity-Microban --checkpoint-file src/mjlab_microban/agents/
 ```
 
 To push the robot while playing, double-click on the trunk in the simulation window, then hold the left-ctrl key and right-click and drag to apply a force.
-
-TODO: Add a gif of the agent playing with random velocity commands and being pushed.
 
 ## Training your own agent
 
@@ -84,7 +86,5 @@ TODO: Add video or gif
 Here is a video of the trained agent being transferred to the real robot: [![Video](https://img.youtube.com/vi/0g1k5r6J7x4/0.jpg)](https://www.youtube.com/watch?v=0g1k5r6J7x4)
 
 ## License
-
-TODO: Add licence references in files and add a LICENSE file.
 
 This software is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file for details.
