@@ -2,14 +2,10 @@
 
 [![License: Apache-2.0](https://img.shields.io/badge/Software-Apache--2.0-yellow.svg)](LICENSE)
 
-<!-- <img src="" align="right" height="350px"> -->
-
 This repository contains Reinforcement Learning (RL) environments for Microban, a compact, low-cost, fully open-source small humanoid robot. If you are interested in learning more about Microban, or even building your own, check out the [Microban repository](https://github.com/MarcDcls/microban).
 
 The environments are built using the [MjLab](https://github.com/mujocolab/mjlab) framework.
 A velocity control task is currently implemented, allowing the robot to follow target linear and angular velocities while resisting external disturbances.
-
-<!-- Add gif of trained agent here -->
 
 ## Install
 
@@ -35,6 +31,16 @@ uv run play Mjlab-Velocity-Microban --checkpoint-file src/mjlab_microban/agents/
 ```
 
 To push the robot while playing, double-click on the trunk in the simulation window, then hold the left-ctrl key and right-click and drag to apply a force.
+
+## Transferring to the real robot
+
+The transfer on the real robot is always a challenge due to the sim-to-real gap. However, the policies trained in this repository have been successfully transferred to the real Microban robot. It is possible due to a combination of domain randomization and a well-tuned modelisation of the actuators (delays, friction, voltage drop, current clipping, etc.). This modelisation is done using the [BAM](https://github.com/Rhoban/bam) library.
+
+Here is a video of the trained agent being transferred to the real robot: [https://youtu.be/1pnFrT_jfXQ](https://youtu.be/1pnFrT_jfXQ)
+
+<p align="center">
+  <img width="70%" alt="image" src="https://github.com/user-attachments/assets/dd91b082-faf0-4c73-a216-fe9b633f51b3" />
+</p>
 
 ## Training your own agent
 
@@ -76,16 +82,6 @@ A ONNX is generated during training with the latest checkpoint, but if you want 
 ```
 uv run python src/mjlab_microban/scripts/export_onnx.py --checkpoint [path to your checkpoint]
 ```
-
-## Transferring to the real robot
-
-The transfer on the real robot is always a challenge due to the sim-to-real gap. However, the policies trained in this repository have been successfully transferred to the real Microban robot. It is possible due to a combination of domain randomization and a well-tuned modelisation of the actuators (delays, friction, voltage drop, current clipping, etc.). This modelisation is done using the [BAM](https://github.com/Rhoban/bam) library.
-
-Here is a video of the trained agent being transferred to the real robot: [https://youtu.be/1pnFrT_jfXQ](https://youtu.be/1pnFrT_jfXQ)
-
-<p align="center">
-  <img width="70%" alt="image" src="https://github.com/user-attachments/assets/dd91b082-faf0-4c73-a216-fe9b633f51b3" />
-</p>
 
 ## License
 
