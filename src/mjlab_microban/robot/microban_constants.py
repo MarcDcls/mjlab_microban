@@ -58,7 +58,7 @@ from bam.mjlab import BamActuatorCfg
 
 actuators = BamActuatorCfg(
     motor_name="xl330",
-    model="m6",
+    model="m1",
     target_names_expr=(r".*",),
     kp_fw=125,
     vin_range=(7.0, 8.0),
